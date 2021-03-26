@@ -11,16 +11,13 @@ def hello_world():
     return 'Hello'
 
 @app.route('/autorize', methods=["POST"])
-def autorize():
-    login = flask.request.form.get("login")
-    password = flask.request.form.get("password")
-    res = flask.request.get("https://mystudyksu.herokuapp.com/")
-    if res.status_code != 200:
+def autorize(params):
+    if not params:
         return flask.jsonify({"success": False})
-    data = res.json()
-
-    if data['login'] in logins_passwords.keys():
-        if logins_passwords[password] == data['password']:
+    login = params['login']
+    password = params['password']
+    if login in logins_passwords.keys():
+        if logins_passwords[login] == password:
             autorize_uuid = '2sdfasd-asdgfdfasg-d-asgsadg'#uuid.uuid4()
             return flask.jsonify({"success": True, "uuid": autorize_uuid})
         else:
@@ -30,8 +27,7 @@ def autorize():
 
 
 @app.route('/check_uuid', methods=["POST"])
-def check_uuid():
-    uuid = flask.request.form.get("uuid")
+def check_uuid(uuid):
     if uuid == '2sdfasd-asdgfdfasg-d-asgsadg':
         return True
     else:
@@ -39,8 +35,7 @@ def check_uuid():
 
 
 @app.route('/send_data', methods=["POST"])
-def send_data():
-    uuid = flask.request.form.get("uuid")
+def send_data(uuid):
     if uuid in uuid_data.keys():
         return flask.jsonify(uuid_data[uuid])
 
