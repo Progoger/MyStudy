@@ -13,7 +13,7 @@ def hello_world():
 
 @app.route('/check', methods=["POST"])
 def check():
-    return flask.request
+    return '1234'
 
 @app.route('/autorize', methods=["POST"])
 def autorize(params):
