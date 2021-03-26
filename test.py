@@ -22,7 +22,6 @@ def autorize():
     if data['login'] in logins_passwords.keys():
         if logins_passwords[password] == data['password']:
             autorize_uuid = '2sdfasd-asdgfdfasg-d-asgsadg'#uuid.uuid4()
-            uuid_login[autorize_uuid] = login
             return flask.jsonify({"success": True, "uuid":autorize_uuid})
         else:
             return flask.jsonify({"success": False})
