@@ -10,6 +10,11 @@ app = flask.Flask(__name__)
 def hello_world():
     return 'Hello'
 
+
+@app.route('/check', methods=["POST"])
+def check():
+    return flask.request
+
 @app.route('/autorize', methods=["POST"])
 def autorize(params):
     if not params:
