@@ -2,7 +2,7 @@ import flask
 
 
 logins_passwords = {"Progoger": "ProForAll123", "Petushok": "GachaForLife123", "LukNi": "LukIamYourFather123"}
-uuid_data = {"2sdfasd-asdgfdfasg-d-asgsadg":{"organisation": 'Костромской Государственный Университет', "color": '1b37d8'}}
+uuid_data = {"2sdfasd-asdgfdfasg-d-asgsadg":{"organisation": 'Kostroma State University', "color": '1b37d8'}}
 
 app = flask.Flask(__name__)
 
@@ -10,13 +10,6 @@ app = flask.Flask(__name__)
 def hello_world():
     return 'Hello'
 
-
-@app.route('/check', methods=["POST"])
-def check():
-    if flask.request.get_json(force=True):
-        json_data = flask.request.get_json(force=True)
-        json_data['login'] += 1
-        return json_data
 
 @app.route('/autorize', methods=["POST"])
 def autorize():
@@ -40,11 +33,11 @@ def check_uuid():
     if flask.request.get_json(force=True):
         uuid = flask.request.get_json(force=True)['uuid']
         if uuid == '2sdfasd-asdgfdfasg-d-asgsadg':
-            return True
+            return flask.jsonify({"success": True})
         else:
-            return False
+            return flask.jsonify({"success": False})
     else:
-        return False
+        return flask.jsonify({"success": False})
 
 
 @app.route('/send_data', methods=["POST"])
@@ -52,7 +45,11 @@ def send_data():
     if flask.request.get_json(force=True):
         uuid = flask.request.get_json(force=True)['uuid']
         if uuid in uuid_data.keys():
-            return flask.jsonify(uuid_data[uuid])
+            return flask.jsonify({"success": True, "result": uuid_data[uuid]})
+        else:
+            return flask.jsonify({"success": False})
+    else:
+        return flask.jsonify({"success": False})
 
 
 
