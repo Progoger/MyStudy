@@ -8,6 +8,11 @@ uuid_data = {"2sdfasd-asdgfdfasg-d-asgsadg":{"organisation": 'Костромск
 app = flask(__name__)
 
 
+@app.route('/')
+def hello_world():
+    return 'Hello'
+
+
 @app.route('/autorize', methods=["POST"])
 def autorize():
     login = flask.request.form.get("login")
@@ -43,3 +48,7 @@ def send_data():
     uuid = flask.request.form.get("uuid")
     if uuid in uuid_data.keys():
         return flask.jsonify(uuid_data[uuid])
+
+
+if __name__ == '__main__':
+    app.run()
