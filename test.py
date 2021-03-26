@@ -22,6 +22,9 @@ def static_proxy(path):
 def hello_world():
     return send_from_directory('./templates', 'index.html') # render_template('index.html')
 
+@app.route('/constructor')
+def constructor_page():
+    return send_from_directory('./templates', 'index.html') # render_template('index.html')
 
 @app.route('/autorize', methods=["POST"])
 def autorize():
