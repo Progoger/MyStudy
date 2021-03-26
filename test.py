@@ -13,7 +13,7 @@ def hello_world():
 
 @app.route('/check', methods=["POST"])
 def check():
-    return flask.Request.get_json()
+    return flask.request.json
 
 @app.route('/autorize', methods=["POST"])
 def autorize(params):
