@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, send_from_directory
-# from generals.database import SqlQuery
+from generals.database import SqlQuery
 # from werkzeug.security import generate_password_hash, check_password_hash
+# from generals.templates import NEW_SCHEMA
+# SqlQuery(NEW_SCHEMA, '1', '1')
 
 # print(str(generate_password_hash('test')))
 # print(check_password_hash('pbkdf2:sha256:150000$fFDjnPFl$cbc2f1add72702ad9f7c7f2582e3acb978269da637467798fa3e63707c7f2125', 'test'))

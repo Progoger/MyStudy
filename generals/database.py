@@ -25,4 +25,4 @@ def SqlQuery(request, *params, my_conn=None):
     cur.execute(request, tuple(params))
     if my_conn is None:
         conn.commit()
-    return cur.fetchall()
+    return cur.fetchall() if cur else None
