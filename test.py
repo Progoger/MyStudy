@@ -2,7 +2,7 @@ import flask
 
 
 logins_passwords = {"Progoger": "ProForAll123", "Petushok": "GachaForLife123", "LukNi": "LukIamYourFather123"}
-uuid_data = {"2sdfasd-asdgfdfasg-d-asgsadg":{"organisation": 'Костромской Государственный Университет'.encode('utf-8'), "color": '1b37d8'}}
+uuid_data = {"2sdfasd-asdgfdfasg-d-asgsadg":{"organisation": 'Kostroma State University', "color": '1b37d8'}}
 
 app = flask.Flask(__name__)
 
