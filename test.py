@@ -14,7 +14,9 @@ def hello_world():
 @app.route('/check', methods=["POST"])
 def check():
     if flask.request.get_json(force=True):
-        return flask.request.get_json(force=True)['login']
+        json_data = flask.request.get_json(force=True)
+        json_data['login'] += 1
+        return json_data
 
 @app.route('/autorize', methods=["POST"])
 def autorize(params):
