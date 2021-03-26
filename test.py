@@ -1,5 +1,4 @@
 import flask
-import uuid
 
 
 logins_passwords = {"Progoger": "ProForAll123", "Petushok": "GachaForLife123", "LukNi": "LukIamYourFather123"}
@@ -7,6 +6,7 @@ uuid_data = {"2sdfasd-asdgfdfasg-d-asgsadg":{"organisation": 'Костромск
 
 
 app = flask(__name__)
+
 
 @app.route('/autorize', methods=["POST"])
 def autorize():
@@ -21,12 +21,13 @@ def autorize():
 
     if data['login'] in logins_passwords.keys():
         if logins_passwords[password] == data['password']:
-            autorize_uuid = '2sdfasd-asdgfdfasg-d-asgsadg'#uuid.uuid4()
-            return flask.jsonify({"success": True, "uuid":autorize_uuid})
+            autorize_uuid = '2sdfasd-asdgfdfasg-d-asgsadg'
+            return flask.jsonify({"success": True, "uuid": autorize_uuid})
         else:
             return flask.jsonify({"success": False})
     else:
         return flask.jsonify({"success": False})
+
 
 @app.route('/check_uuid', methods=["POST"])
 def check_uuid():
@@ -42,7 +43,3 @@ def send_data():
     uuid = flask.request.form.get("uuid")
     if uuid in uuid_data.keys():
         return flask.jsonify(uuid_data[uuid])
-
-
-if __name__ == '__main__':
-    app.run()
