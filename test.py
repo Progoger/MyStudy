@@ -1,6 +1,5 @@
 import flask
 
-
 logins_passwords = {"Progoger": "ProForAll123", "Petushok": "GachaForLife123", "LukNi": "LukIamYourFather123"}
 uuid_data = {"2sdfasd-asdgfdfasg-d-asgsadg":{"organisation": 'Костромской Государственный Университет', "color": '1b37d8'}}
 
@@ -51,4 +50,4 @@ def send_data():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
