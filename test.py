@@ -19,7 +19,8 @@ def check():
         return json_data
 
 @app.route('/autorize', methods=["POST"])
-def autorize(params):
+def autorize():
+    params = flask.request.get_json(force=True)
     if not params:
         return flask.jsonify({"success": False})
     login = params['login']
@@ -35,17 +36,24 @@ def autorize(params):
 
 
 @app.route('/check_uuid', methods=["POST"])
-def check_uuid(uuid):
-    if uuid == '2sdfasd-asdgfdfasg-d-asgsadg':
-        return True
+def check_uuid():
+    if flask.request.get_json(force=True):
+        uuid = flask.request.get_json(force=True)['uuid']
+        if uuid == '2sdfasd-asdgfdfasg-d-asgsadg':
+            return True
+        else:
+            return False
     else:
         return False
 
 
 @app.route('/send_data', methods=["POST"])
-def send_data(uuid):
-    if uuid in uuid_data.keys():
-        return flask.jsonify(uuid_data[uuid])
+def send_data():
+    if flask.request.get_json(force=True):
+        uuid = flask.request.get_json(force=True)['uuid']
+        if uuid in uuid_data.keys():
+            return flask.jsonify(uuid_data[uuid])
+
 
 
 if __name__ == '__main__':
