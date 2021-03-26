@@ -6,6 +6,9 @@ uuid_data = {"2sdfasd-asdgfdfasg-d-asgsadg":{"organisation": 'Костромск
 
 app = flask.Flask(__name__)
 
+@app.route('/')
+def hello_world():
+    return 'Hello'
 
 @app.route('/autorize', methods=["POST"])
 def autorize():
