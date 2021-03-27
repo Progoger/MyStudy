@@ -23,7 +23,7 @@ class User:
         :return:
         """
         return {
-            'uuid': self.session,
+            'session': self.session,
             'university': self.university,
             'color': self.color
         }.copy()
@@ -44,10 +44,7 @@ class User:
         Проверка на успешность авторизации
         :return:
         """
-        if self.login and self.session and self.schema:
-            return True
-        else:
-            return False
+        return self.login and self.session and self.schema
 
 
 def load_user_info(session):

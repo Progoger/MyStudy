@@ -17,7 +17,6 @@ def hello_world():
     return send_from_directory('./templates', 'index.html')
 
 
-@app.route('/authorize', methods=["POST"])
 @app.route('/login', methods=["GET"])
 def login():
     response = {
@@ -59,7 +58,6 @@ def check_session(func):
     return wrapper
 
 
-@app.route('/check_uuid', methods=["POST"])
 @app.route('/get_user_info', methods=["GET"])
 @check_session
 def get_user_info():
