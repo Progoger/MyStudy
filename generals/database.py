@@ -38,7 +38,7 @@ class Database:
             host='ec2-54-155-208-5.eu-west-1.compute.amazonaws.com',
             port=5432,
             database='dm6a2f8rs68e1',
-            options=f'-c search_path = {self.clientid + "," if self.clientid else ""}public'
+            options=f'-c search_path={self.clientid + "," if self.clientid else ""}public'
         )
 
     def SqlQuery(self, request, *params, my_conn=None):
@@ -54,11 +54,36 @@ class Database:
             cur = self.conn.cursor()
         else:
             cur = my_conn.cursor()
-        cur.execute(request, tuple(params))
+        cur.execute(request, params)
         if my_conn is None:
             self.conn.commit()
-        return cur.fetchall() if cur else None
+        data = cur.fetchall() if cur.description else []
+        if data:
+            cols = list(map(lambda x: x[0], cur.description))
+            result = []
+            for row in data:
+                row_with_fields = {cols[i]: row[i] for i in range(len(cols))}
+                result.append(row_with_fields)
+            return result
+        else:
+            return data
+
+    def SqlQueryScalar(self, request, *params, my_conn=None):
+        """
+        Выполняет sql запрос
+        :param request: Запрос. Для корректной вставки в запрос параметров нужно в запросе вставлять %s
+        Пример: "select * from "table" where "type" = %s"
+        :param params: Параметры, которые нужно вставить запрос
+        :param my_conn: Потом расскажу
+        :return:
+        """
+        data = self.SqlQuery(request, params, my_conn=my_conn)
+        return list(data[0].values())[0] if data else None
+
+    def SqlQueryRecord(self, request, *params, my_conn=None):
+        res = self.SqlQuery(request, params, my_conn=my_conn)
+        return res[0] if res else res
 
 
 def get_schema_by_session(session):
-    return Database().SqlQuery(GET_SCHEMA_BY_SESSION, session)
+    return Database().SqlQueryScalar(GET_SCHEMA_BY_SESSION, session)
