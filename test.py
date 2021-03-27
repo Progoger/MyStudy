@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory
-from generals.database import SqlQuery
+# from generals.database import SqlQuery
 # from werkzeug.security import generate_password_hash, check_password_hash
 # from generals.templates import NEW_SCHEMA
 # SqlQuery(NEW_SCHEMA, '1', '1')

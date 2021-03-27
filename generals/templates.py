@@ -221,3 +221,7 @@ TABLESPACE pg_default;
 ALTER TABLE "Schedule"
     OWNER to tatfezxgvgaefs;
 """
+
+GET_SCHEMA_BY_SESSION = """
+SELECT "EducationalID" FROM "Authorization" WHERE "Session" = %s
+"""
