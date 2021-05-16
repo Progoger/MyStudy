@@ -1,6 +1,7 @@
 from flask import Flask, request, send_from_directory, make_response
-from users.auth import do_login, load_user_info
-from functools import wraps
+from generals.validate import check_session, enrichment_json
+from users.auth import do_login
+from university.university import get_all_universities, get_all_directions
 
 app = Flask(__name__)
 SESSIONS = {}
@@ -17,7 +18,18 @@ def hello_world():
     return send_from_directory('./templates', 'index.html')
 
 
-@app.route('/login', methods=["GET"])
+@app.route('/get_user_info', methods=["GET"])
+@check_session
+def get_user_info():
+    session = request.cookies.get('_ms_AuthToken')
+    response = {
+        'success': True
+    }
+    response.update(SESSIONS[session].get_info_for_web())
+    return make_response(response)
+
+
+@app.route('/api/auth/login', methods=["POST"])
 def login():
     response = {
         'success': False,
@@ -40,32 +52,27 @@ def login():
         return make_response(response)
 
 
-def check_session(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        session = request.cookies.get('_ms_AuthToken')
-        if session:
-            user = load_user_info(session)
-            if user.is_authorized():
-                SESSIONS[user.session] = user
-                return func(*args, **kwargs)
-            else:
-                if user.session in SESSIONS:
-                    SESSIONS.pop(user.session)
-        resp = make_response({'success': False}, 401)
-        resp.set_cookie('_ms_AuthToken', '', expires=0)
-        return resp
-    return wrapper
-
-
-@app.route('/get_user_info', methods=["GET"])
+@app.route('/api/get_universities', methods=["GET"])
 @check_session
-def get_user_info():
-    session = request.cookies.get('_ms_AuthToken')
+def get_univers():
     response = {
         'success': True
     }
-    response.update(SESSIONS[session].get_info_for_web())
+    params = {}
+    enrichment_json(params)
+    response.update(get_all_universities(params))
+    return make_response(response)
+
+
+@app.route('/api/get_directions', methods=["GET"])
+@check_session
+def get_directs():
+    response = {
+        'success': True
+    }
+    params = {}
+    enrichment_json(params)
+    response.update(get_all_directions(params))
     return make_response(response)
 
 
