@@ -1,11 +1,19 @@
 from generals.database import Database
-from university.templates import (GET_ALL_UNIVERSITIES, GET_ALL_DIRECTIONS)
+from university.templates import (GET_ALL_INSTITUTES, GET_DIRECTIONS, ADD_DIRECTION, ADD_INSTITUTE)
+from uuid import uuid4
 
 
-def get_all_universities(params):
-    return Database(params['schema']).SqlQuery(GET_ALL_UNIVERSITIES)
+def get_all_institutes(params):
+    return Database(params['schema']).SqlQuery(GET_ALL_INSTITUTES)
 
 
-def get_all_directions(params):
-    return Database(params['schema']).SqlQuery(GET_ALL_DIRECTIONS)
+def get_directions(params):
+    return Database(params['schema']).SqlQuery(GET_DIRECTIONS, params['direction'])
 
+
+def add_direction(params):
+    Database(params['schema']).SqlQuery(ADD_DIRECTION, uuid4(), params['title'], params['institute'])
+
+
+def add_institute(params):
+    Database(params['schema']).SqlQuery(ADD_INSTITUTE, uuid4(), params['title'])

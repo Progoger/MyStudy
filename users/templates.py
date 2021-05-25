@@ -26,3 +26,9 @@ FROM "Authorization"
 INNER JOIN "Educational" E on E."Schema" = "Authorization"."EducationalID"
 WHERE "Session" = %s
 """
+
+GET_TEACHERS = """
+    select u."ID", u."Name", u."Surname", u."Patronymic" from "Teachers" t 
+    join "User" u on u."ID" = t."TeacherID"
+    where t."LessonID" = %s
+"""

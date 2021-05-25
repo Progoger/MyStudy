@@ -1,3 +1,4 @@
+# TODO: ПЕРЕД РЕГИСТРАЦИЕЙ НОВОГО АККАУНТА, НЕОБХОДИМО ОБНОВИТЬ К НОВОМУ ФОРМАТУ!!!
 NEW_SCHEMA = """
 CREATE SCHEMA %s
     AUTHORIZATION tatfezxgvgaefs;

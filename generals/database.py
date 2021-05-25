@@ -1,4 +1,8 @@
 import psycopg2 as pg
+import psycopg2.extras
+
+# Для того, чтобы могли в запросах использовать uuid
+psycopg2.extras.register_uuid()
 
 
 class Database:

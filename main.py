@@ -1,10 +1,41 @@
 from flask import Flask, request, send_from_directory, make_response
-from generals.validate import check_session, enrichment_json
-from users.auth import do_login
-from university.university import get_all_universities, get_all_directions
+from functools import wraps
+from users.auth import do_login, load_user_info
+from users.user import get_teachers
+from university.university import get_all_institutes, get_directions, add_direction, add_institute
+from lessons.lesson import get_lessons, add_lesson
+import json
 
 app = Flask(__name__)
 SESSIONS = {}
+
+
+def check_session(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        session = request.cookies.get('_ms_AuthToken')
+        if session:
+            user = load_user_info(session)
+            if user.is_authorized():
+                SESSIONS[user.session] = user
+                return func(*args, **kwargs)
+            else:
+                if user.session in SESSIONS:
+                    SESSIONS.pop(user.session)
+        resp = make_response({'success': False}, 401)
+        resp.set_cookie('_ms_AuthToken', '', expires=0)
+        return resp
+    return wrapper
+
+
+def enrichment_json(params):
+    session = request.cookies.get('_ms_AuthToken')
+    if session:
+        data = SESSIONS.get(session)
+        if data is None:
+            data = load_user_info(session)
+        if data:
+            params.update(data.get_info_for_back())
 
 
 @app.route('/<path:path>', methods=['GET'])
@@ -14,23 +45,23 @@ def static_proxy(path):
 
 @app.route('/')
 @app.route('/constructor')
-def hello_world():
+def main_route():
     return send_from_directory('./templates', 'index.html')
 
 
-@app.route('/get_user_info', methods=["GET"])
+@app.route('/api/get_user_info', methods=["GET"])
 @check_session
-def get_user_info():
+def get_user_info_route():
     session = request.cookies.get('_ms_AuthToken')
     response = {
         'success': True
     }
     response.update(SESSIONS[session].get_info_for_web())
-    return make_response(response)
+    return make_response(json.dumps(response))
 
 
 @app.route('/api/auth/login', methods=["POST"])
-def login():
+def login_route():
     response = {
         'success': False,
         'session': None
@@ -45,35 +76,67 @@ def login():
                 if result.old_session is not None and result.old_session in SESSIONS:
                     SESSIONS.pop(result.old_session)
                 SESSIONS[result.session] = result
-            return make_response(response)
+            return make_response(json.dumps(response))
         else:
-            return make_response(response)
+            return make_response(json.dumps(response))
     else:
-        return make_response(response)
+        return make_response(json.dumps(response))
 
 
-@app.route('/api/get_universities', methods=["GET"])
+@app.route('/api/get_institutes', methods=["GET"])
 @check_session
-def get_univers():
-    response = {
-        'success': True
-    }
+def get_institutes_route():
     params = {}
     enrichment_json(params)
-    response.update(get_all_universities(params))
-    return make_response(response)
+    return make_response(json.dumps(get_all_institutes(params)))
 
 
 @app.route('/api/get_directions', methods=["GET"])
 @check_session
-def get_directs():
-    response = {
-        'success': True
-    }
-    params = {}
+def get_directions_route():
+    params = dict(request.args)
     enrichment_json(params)
-    response.update(get_all_directions(params))
-    return make_response(response)
+    return make_response(json.dumps(get_directions(params)))
+
+
+@app.route('/api/get_lessons', methods=["GET"])
+@check_session
+def get_lessons_route():
+    params = dict(request.args)
+    enrichment_json(params)
+    return make_response(json.dumps(get_lessons(params)))
+
+
+@app.route('/api/get_teachers', methods=["GET"])
+@check_session
+def get_teachers_route():
+    params = dict(request.args)
+    enrichment_json(params)
+    return make_response(json.dumps(get_teachers(params)))
+
+
+@app.route('/api/add_lesson', methods=["POST"])
+@check_session
+def add_lesson_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(add_lesson(params)))
+
+
+@app.route('/api/add_direction', methods=["POST"])
+@check_session
+def add_direction_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(add_direction(params)))
+
+
+@app.route('/api/add_institute', methods=["POST"])
+@check_session
+def add_institute_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(add_institute(params)))
 
 
 if __name__ == '__main__':
