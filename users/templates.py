@@ -29,6 +29,6 @@ WHERE "Session" = %s
 
 GET_TEACHERS = """
     select u."ID", u."Name", u."Surname", u."Patronymic" from "Teachers" t 
-    join "User" u on u."ID" = t."TeacherID"
+    join "User" u on u."ID" = t."UserID"
     where t."LessonID" = %s
 """

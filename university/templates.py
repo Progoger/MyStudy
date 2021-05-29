@@ -1,17 +1,17 @@
 GET_ALL_INSTITUTES = """
-select "ID", "Name" from "Institute"
+    select "ID" "id", "Name" "title" from "Institute"
 """
 
 GET_DIRECTIONS = """
-select "ID", "Name" from "Direction" where "InstituteID" = %s 
+    select "ID" "id", "Name" "title" from "Direction" where "InstituteID" = %s 
 """
 
 ADD_DIRECTION = """
     insert into "Direction" values (%s, %s, %s)
-    returning *
+    returning "ID" "id", "Name" "title"
 """
 
 ADD_INSTITUTE = """
     insert into "Direction" values (%s, %s)
-    returning *
+    returning "ID" "id", "Name" "title"
 """

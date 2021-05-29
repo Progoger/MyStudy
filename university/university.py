@@ -8,12 +8,12 @@ def get_all_institutes(params):
 
 
 def get_directions(params):
-    return Database(params['schema']).SqlQuery(GET_DIRECTIONS, params['direction'])
+    return Database(params['schema']).SqlQuery(GET_DIRECTIONS, params['institute'])
 
 
 def add_direction(params):
-    Database(params['schema']).SqlQuery(ADD_DIRECTION, uuid4(), params['title'], params['institute'])
+    return Database(params['schema']).SqlQuery(ADD_DIRECTION, uuid4(), params['title'], params['institute'])
 
 
 def add_institute(params):
-    Database(params['schema']).SqlQuery(ADD_INSTITUTE, uuid4(), params['title'])
+    return Database(params['schema']).SqlQuery(ADD_INSTITUTE, uuid4(), params['title'])

@@ -1,8 +1,8 @@
 GET_LESSONS = """
-    select "ID", "Name" from "Lesson" where "DirectionID" = %s
+    select "ID" "id", "Name" "title" from "Lesson" where "DirectionID" = %s
 """
 
 ADD_LESSON = """
     insert into "Lesson" values (%s, %s, %s)
-    returning *
+    returning "ID" "id", "Name" "title"
 """

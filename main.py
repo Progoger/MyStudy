@@ -4,16 +4,18 @@ from users.auth import do_login, load_user_info
 from users.user import get_teachers
 from university.university import get_all_institutes, get_directions, add_direction, add_institute
 from lessons.lesson import get_lessons, add_lesson
+from generals.helpers import UUIDEncoder
 import json
 
 app = Flask(__name__)
 SESSIONS = {}
+ROOT_SESSION = '46936881-b926-4321-a583-35d7fe1fece9'
 
 
 def check_session(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        session = request.cookies.get('_ms_AuthToken')
+        session = ROOT_SESSION # request.cookies.get('_ms_AuthToken')
         if session:
             user = load_user_info(session)
             if user.is_authorized():
@@ -29,7 +31,7 @@ def check_session(func):
 
 
 def enrichment_json(params):
-    session = request.cookies.get('_ms_AuthToken')
+    session = ROOT_SESSION #request.cookies.get('_ms_AuthToken')
     if session:
         data = SESSIONS.get(session)
         if data is None:
@@ -52,12 +54,12 @@ def main_route():
 @app.route('/api/get_user_info', methods=["GET"])
 @check_session
 def get_user_info_route():
-    session = request.cookies.get('_ms_AuthToken')
+    session = ROOT_SESSION#request.cookies.get('_ms_AuthToken')
     response = {
         'success': True
     }
     response.update(SESSIONS[session].get_info_for_web())
-    return make_response(json.dumps(response))
+    return make_response(json.dumps(response, cls=UUIDEncoder))
 
 
 @app.route('/api/auth/login', methods=["POST"])
@@ -76,11 +78,11 @@ def login_route():
                 if result.old_session is not None and result.old_session in SESSIONS:
                     SESSIONS.pop(result.old_session)
                 SESSIONS[result.session] = result
-            return make_response(json.dumps(response))
+            return make_response(json.dumps(response, cls=UUIDEncoder))
         else:
-            return make_response(json.dumps(response))
+            return make_response(json.dumps(response, cls=UUIDEncoder))
     else:
-        return make_response(json.dumps(response))
+        return make_response(json.dumps(response, cls=UUIDEncoder))
 
 
 @app.route('/api/get_institutes', methods=["GET"])
@@ -88,7 +90,7 @@ def login_route():
 def get_institutes_route():
     params = {}
     enrichment_json(params)
-    return make_response(json.dumps(get_all_institutes(params)))
+    return make_response(json.dumps(get_all_institutes(params), cls=UUIDEncoder))
 
 
 @app.route('/api/get_directions', methods=["GET"])
@@ -96,7 +98,7 @@ def get_institutes_route():
 def get_directions_route():
     params = dict(request.args)
     enrichment_json(params)
-    return make_response(json.dumps(get_directions(params)))
+    return make_response(json.dumps(get_directions(params), cls=UUIDEncoder))
 
 
 @app.route('/api/get_lessons', methods=["GET"])
@@ -104,7 +106,7 @@ def get_directions_route():
 def get_lessons_route():
     params = dict(request.args)
     enrichment_json(params)
-    return make_response(json.dumps(get_lessons(params)))
+    return make_response(json.dumps(get_lessons(params), cls=UUIDEncoder))
 
 
 @app.route('/api/get_teachers', methods=["GET"])
@@ -112,7 +114,7 @@ def get_lessons_route():
 def get_teachers_route():
     params = dict(request.args)
     enrichment_json(params)
-    return make_response(json.dumps(get_teachers(params)))
+    return make_response(json.dumps(get_teachers(params), cls=UUIDEncoder))
 
 
 @app.route('/api/add_lesson', methods=["POST"])
@@ -120,7 +122,7 @@ def get_teachers_route():
 def add_lesson_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
-    return make_response(json.dumps(add_lesson(params)))
+    return make_response(json.dumps(add_lesson(params), cls=UUIDEncoder))
 
 
 @app.route('/api/add_direction', methods=["POST"])
@@ -128,7 +130,7 @@ def add_lesson_route():
 def add_direction_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
-    return make_response(json.dumps(add_direction(params)))
+    return make_response(json.dumps(add_direction(params), cls=UUIDEncoder))
 
 
 @app.route('/api/add_institute', methods=["POST"])
@@ -136,7 +138,7 @@ def add_direction_route():
 def add_institute_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
-    return make_response(json.dumps(add_institute(params)))
+    return make_response(json.dumps(add_institute(params), cls=UUIDEncoder))
 
 
 if __name__ == '__main__':

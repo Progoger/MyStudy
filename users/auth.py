@@ -52,7 +52,7 @@ def load_user_info(session):
     if user_data:
         return User(
             user_data['Login'],
-            user_data['Session'],
+            str(user_data['Session']),
             user_data['Schema'],
             None,
             user_data['University'],
