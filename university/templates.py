@@ -12,6 +12,6 @@ ADD_DIRECTION = """
 """
 
 ADD_INSTITUTE = """
-    insert into "Direction" values (%s, %s)
+    insert into "Institute" values (%s, %s)
     returning "ID" "id", "Name" "title"
 """
