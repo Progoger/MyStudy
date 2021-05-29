@@ -4,4 +4,5 @@ GET_LESSONS = """
 
 ADD_LESSON = """
     insert into "Lesson" values (%s, %s, %s)
+    returning *
 """

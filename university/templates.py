@@ -8,8 +8,10 @@ select "ID", "Name" from "Direction" where "InstituteID" = %s
 
 ADD_DIRECTION = """
     insert into "Direction" values (%s, %s, %s)
+    returning *
 """
 
 ADD_INSTITUTE = """
     insert into "Direction" values (%s, %s)
+    returning *
 """
