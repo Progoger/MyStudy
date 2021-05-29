@@ -1,9 +1,10 @@
 from flask import Flask, request, send_from_directory, make_response
 from functools import wraps
 from users.auth import do_login, load_user_info
-from users.user import get_teachers
+from users.user import get_teachers, get_teachers_by_institute, add_teacher
 from university.university import get_all_institutes, get_directions, add_direction, add_institute
 from lessons.lesson import get_lessons, add_lesson
+from groups.group import get_all_groups
 from generals.helpers import UUIDEncoder
 import json
 
@@ -117,6 +118,22 @@ def get_teachers_route():
     return make_response(json.dumps(get_teachers(params), cls=UUIDEncoder))
 
 
+@app.route('/api/get_teachers_by_institute', methods=["GET"])
+@check_session
+def get_teachers_by_institute_route():
+    params = dict(request.args)
+    enrichment_json(params)
+    return make_response(json.dumps(get_teachers_by_institute(params), cls=UUIDEncoder))
+
+
+@app.route('/api/get_all_groups', methods=["GET"])
+@check_session
+def get_all_groups_route():
+    params = dict(request.args)
+    enrichment_json(params)
+    return make_response(json.dumps(get_all_groups(params), cls=UUIDEncoder))
+
+
 @app.route('/api/add_lesson', methods=["POST"])
 @check_session
 def add_lesson_route():
@@ -139,6 +156,14 @@ def add_institute_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_institute(params), cls=UUIDEncoder))
+
+
+@app.route('/api/add_teacher', methods=["POST"])
+@check_session
+def add_teacher_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(add_teacher(params), cls=UUIDEncoder))
 
 
 if __name__ == '__main__':

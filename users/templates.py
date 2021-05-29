@@ -32,3 +32,21 @@ GET_TEACHERS = """
     join "User" u on u."ID" = t."UserID"
     where t."LessonID" = %s
 """
+
+GET_TEACHERS_BY_INSTITUTE = """
+    select 
+	u."ID" "id"
+,	u."Name" "name"
+,	u."Surname" "surname"
+,	u."Patronymic" "patronymic"
+from "User" u
+inner join 
+	"Direction" d 
+on u."DirectionID" = d."ID" 
+where d."InstituteID" = %s and u."Group" is NULL
+"""
+
+INSERT_TEACHER = """
+    insert into "User" ("ID", "Name", "Surname", "Patronymic", "DirectionID")
+    values(%s, %s, %s, %s, %s)
+"""

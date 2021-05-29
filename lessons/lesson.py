@@ -13,5 +13,7 @@ def get_lessons(params):
 
 
 def add_lesson(params):
-    Database(params['schema']).SqlQuery(ADD_LESSON, uuid4(), params['title'], params['direction'])
+    res = Database(params['schema']).SqlQueryRecord(ADD_LESSON, uuid4(), params['title'], params['direction'])
+    res['tutors'] = []
+    return res
 
