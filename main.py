@@ -1,10 +1,11 @@
 from flask import Flask, request, send_from_directory, make_response
 from functools import wraps
+from schedule.schedule import add_schedule
 from users.auth import do_login, load_user_info, get_root_session
 from users.user import get_teachers, get_teachers_by_institute, add_teacher, update_teachers_lesson
 from university.university import get_all_institutes, get_directions, add_direction, add_institute
-from lessons.lesson import get_lessons, add_lesson
-from groups.group import get_all_groups, get_groups_by_direction
+from lessons.lesson import get_lessons, add_lesson, delete_lesson
+from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_by_group, add_group
 from generals.helpers import UUIDEncoder
 from housing.housing import get_all_housing, add_housing, edit_housing_address
 from audience.audience import get_audiences, add_audiences
@@ -145,6 +146,14 @@ def get_groups_by_direction_route():
     return make_response(json.dumps(get_groups_by_direction(params), cls=UUIDEncoder))
 
 
+@app.route('/api/get_subgroups_by_group', methods=["POST"])
+@check_session
+def get_subgroups_by_group_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(get_subgroups_by_group(params), cls=UUIDEncoder))
+
+
 @app.route('/api/add_lesson', methods=["POST"])
 @check_session
 def add_lesson_route():
@@ -223,6 +232,30 @@ def add_audiences_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_audiences(params), cls=UUIDEncoder))
+
+
+@app.route('/api/add_group', methods=["POST"])
+@check_session
+def add_group_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(add_group(params), cls=UUIDEncoder))
+
+
+@app.route('/api/add_schedule', methods=["POST"])
+@check_session
+def add_schedule_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(add_schedule(params), cls=UUIDEncoder))
+
+
+@app.route('/api/delete_lesson', methods=["POST"])
+@check_session
+def delete_lesson_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(delete_lesson(params), cls=UUIDEncoder))
 
 
 if __name__ == '__main__':

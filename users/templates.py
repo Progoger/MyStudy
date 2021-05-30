@@ -49,7 +49,7 @@ where d."InstituteID" = %s and u."Group" is NULL
 ADD_TEACHER = """
     insert into "User" ("ID", "Name", "Surname", "Patronymic", "DirectionID")
     values(%s, %s, %s, %s, %s)
-    returning "ID" "id"
+    returning "ID" "id", "Name" "name", "Surname" "surname", "Patronymic" "patronymic"
 """
 
 ADD_TEACHER_TO_LESSON = """
