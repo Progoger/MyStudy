@@ -28,7 +28,7 @@ WHERE "Session" = %s
 """
 
 GET_TEACHERS = """
-    select u."ID", u."Name", u."Surname", u."Patronymic" from "Teachers" t 
+    select u."ID" "id", u."Name" "name", u."Surname" "surname", u."Patronymic" "patronymic" from "Teachers" t 
     join "User" u on u."ID" = t."UserID"
     where t."LessonID" = %s
 """
@@ -46,7 +46,27 @@ on u."DirectionID" = d."ID"
 where d."InstituteID" = %s and u."Group" is NULL
 """
 
-INSERT_TEACHER = """
+ADD_TEACHER = """
     insert into "User" ("ID", "Name", "Surname", "Patronymic", "DirectionID")
     values(%s, %s, %s, %s, %s)
+    returning "ID" "id"
+"""
+
+ADD_TEACHER_TO_LESSON = """
+    insert into "Teachers"
+    values (%s, %s)
+"""
+
+DELETE_TEACHERS_FROM_LESSON = """
+    delete from "Teachers"
+    where "LessonID" = %s
+"""
+
+ADD_SHEDULE = """
+    insert into "Shedule" 
+"""
+
+CHECK_TEACHER_LESSON = """
+    select true from "Teachers"
+    where "LessonID" = %s
 """

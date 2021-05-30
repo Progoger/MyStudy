@@ -1,5 +1,6 @@
 GET_ALL_INSTITUTES = """
     select "ID" "id", "Name" "title" from "Institute"
+    WHERE "OrganisationID" = %s
 """
 
 GET_DIRECTIONS = """

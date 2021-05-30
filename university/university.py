@@ -4,7 +4,7 @@ from uuid import uuid4
 
 
 def get_all_institutes(params):
-    return Database(params['schema']).SqlQuery(GET_ALL_INSTITUTES)
+    return Database(params['schema']).SqlQuery(GET_ALL_INSTITUTES, params['organisation'])
 
 
 def get_directions(params):
