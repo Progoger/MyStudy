@@ -9,6 +9,7 @@ from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_
 from generals.helpers import UUIDEncoder
 from housing.housing import get_all_housing, add_housing, edit_housing_address
 from audience.audience import get_audiences, add_audiences
+from exceptions.exception import ActionExceptionHandler
 import json
 
 app = Flask(__name__)
@@ -36,6 +37,9 @@ def check_session(func):
 
 
 def enrichment_json(params):
+    """
+    Дополняет входящий с фронтента json нужными параметрами
+    """
     session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
     if session:
         data = SESSIONS.get(session)
@@ -43,6 +47,19 @@ def enrichment_json(params):
             data = load_user_info(session)
         if data:
             params.update(data.get_info_for_back())
+
+
+def exceptions_catcher(func):
+    """
+    Перехватывает все наши ошибки
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except ActionExceptionHandler as ex:
+            return ex.get_response()
+    return wrapper
 
 
 @app.route('/<path:path>', methods=['GET'])
@@ -156,6 +173,7 @@ def get_subgroups_by_group_route():
 
 @app.route('/api/add_lesson', methods=["POST"])
 @check_session
+@exceptions_catcher
 def add_lesson_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
@@ -164,6 +182,7 @@ def add_lesson_route():
 
 @app.route('/api/add_direction', methods=["POST"])
 @check_session
+@exceptions_catcher
 def add_direction_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
@@ -172,6 +191,7 @@ def add_direction_route():
 
 @app.route('/api/add_institute', methods=["POST"])
 @check_session
+@exceptions_catcher
 def add_institute_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
@@ -180,6 +200,7 @@ def add_institute_route():
 
 @app.route('/api/add_teacher', methods=["POST"])
 @check_session
+@exceptions_catcher
 def add_teacher_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
@@ -204,6 +225,7 @@ def get_housing_route():
 
 @app.route('/api/add_housing', methods=["POST"])
 @check_session
+@exceptions_catcher
 def add_housing_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
@@ -212,6 +234,7 @@ def add_housing_route():
 
 @app.route('/api/edit_housing', methods=["POST"])
 @check_session
+@exceptions_catcher
 def edit_housing_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
@@ -228,6 +251,7 @@ def get_audiences_route():
 
 @app.route('/api/add_audiences', methods=["POST"])
 @check_session
+@exceptions_catcher
 def add_audiences_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
@@ -236,6 +260,7 @@ def add_audiences_route():
 
 @app.route('/api/add_group', methods=["POST"])
 @check_session
+@exceptions_catcher
 def add_group_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
@@ -244,6 +269,7 @@ def add_group_route():
 
 @app.route('/api/add_schedule', methods=["POST"])
 @check_session
+@exceptions_catcher
 def add_schedule_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
