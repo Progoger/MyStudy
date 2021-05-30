@@ -1,5 +1,5 @@
 from generals.database import Database
-from lessons.templates import GET_LESSONS, ADD_LESSON, DELETE_LESSON, DELETE_SCHEDULE_GROUP_BY_LESSON, DELETE_SCHEDULES_BY_LESSON, DELETE_TEACHERS_LESSON
+from lessons.templates import GET_LESSONS, ADD_LESSON, DELETE_LESSON
 from users.templates import GET_TEACHERS
 from uuid import uuid4
 
@@ -19,8 +19,5 @@ def add_lesson(params):
 
 
 def delete_lesson(params):
-    Database(params['schema']).SqlQuery(DELETE_SCHEDULE_GROUP_BY_LESSON, params['id'])
-    Database(params['schema']).SqlQuery(DELETE_SCHEDULES_BY_LESSON, params['id'])
-    Database(params['schema']).SqlQuery(DELETE_TEACHERS_LESSON, params['id'])
     Database(params['schema']).SqlQuery(DELETE_LESSON, params['id'])
     return params['id']
