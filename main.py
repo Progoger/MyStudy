@@ -1,6 +1,6 @@
 from flask import Flask, request, send_from_directory, make_response
 from functools import wraps
-from schedule.schedule import add_schedule
+from schedule.schedule import add_schedule, get_schedule
 from users.auth import do_login, load_user_info, get_root_session
 from users.user import get_teachers, get_teachers_by_institute, add_teacher, update_teachers_lesson
 from university.university import get_all_institutes, get_directions, add_direction, add_institute
@@ -275,6 +275,12 @@ def add_schedule_route():
     enrichment_json(params)
     return make_response(json.dumps(add_schedule(params), cls=UUIDEncoder))
 
+@app.route('/api/get_schedule', methods=["POST"])
+@check_session
+def get_schedule_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(get_schedule(params), cls=UUIDEncoder))
 
 @app.route('/api/delete_lesson', methods=["POST"])
 @check_session
