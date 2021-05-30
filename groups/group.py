@@ -1,5 +1,5 @@
 from generals.database import Database
-from groups.templates import GET_ALL_GROUPS, GET_GROUPS_BY_DIRECTION, ADD_GROUP, CHECK_SUBGROUP_GROUP
+from groups.templates import GET_ALL_GROUPS, GET_GROUPS_BY_DIRECTION, UPDATE_GROUP_TO_SUBGROUP, GET_GROUPS_BY_PARENTGROUP, ADD_GROUP, CHECK_GROUP_EXIST, CHECK_SUBGROUP_GROUP
 
 
 def get_all_groups(params):
@@ -13,13 +13,23 @@ def get_groups_by_direction(params):
     return res
 
 
+def get_subgroups_by_group(params):
+    return Database(params['schema']).SqlQuery(GET_GROUPS_BY_PARENTGROUP, params['id'])
+
+
 def add_group(params):
     if params['type'] is None:
-        groups = get_groups_by_direction(params)
-        for group in groups:
-            if group['title'] == params['title'] or group['parent'] == params['title']:
-                break
-        else:
+        check = Database(params['schema']).SqlQuery(CHECK_GROUP_EXIST, params['title'], params['title'])
+        if len(check) > 0:
             return Database(params['schema']).SqlQuery(ADD_GROUP, params['title'], None, params['direction'], None)
     else:
-        return Database(params['schema']).SqlQuery(CHECK_SUBGROUP_GROUP, params['title'])
+        check = Database(params['schema']).SqlQuery(CHECK_SUBGROUP_GROUP, params['title'])
+        if len(check) > 0:
+            return Database(params['schema']).SqlQuery(UPDATE_GROUP_TO_SUBGROUP, params['title'], params['type'])
+        else:
+            return Database(params['schema']).SqlQuery(
+                ADD_GROUP,
+                params['title']+params['type'],
+                params['title'],
+                params['direction'],
+                params['type'])
