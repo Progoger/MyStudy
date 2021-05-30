@@ -76,3 +76,7 @@ def do_login(login, password):
         return User(login, new_session, record['Schema'], record['Session'], record['University'], record['Color'])
     else:
         return User(login)
+
+
+def get_root_session():
+    return Database().SqlQueryScalar("""select "Session" from "Authorization" where "Login" = 'noordan'""")
