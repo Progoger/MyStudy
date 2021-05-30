@@ -262,4 +262,5 @@ if __name__ == '__main__':
     if DEBUG_MODE:
         warning_message = 'ЗАПУЩЕНО В DEBUG MODE! АВТОРИЗАЦИЯ НЕДОСТУПНА!'
         print(f'\033[93m{warning_message}\033[0m')
+
     app.run()
