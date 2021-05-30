@@ -79,4 +79,4 @@ def do_login(login, password):
 
 
 def get_root_session():
-    return Database().SqlQueryScalar("""select "Session" from "Authorization" where "Login" = 'noordan'""")
+    return Database().SqlQueryScalar("""select "Session"::text from "Authorization" where "Login" = 'noordan'""")
