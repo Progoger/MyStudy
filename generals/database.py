@@ -23,7 +23,7 @@ class Database:
         :param request: Запрос. Для корректной вставки в запрос параметров нужно в запросе вставлять %s
         Пример: "select * from "table" where "type" = %s"
         :param params: Параметры, которые нужно вставить запрос
-        :param my_conn: Потом расскажу
+        :param my_conn: Персональный коннект(для транкзакций)
         :return:
         """
         if my_conn is None:
@@ -50,7 +50,7 @@ class Database:
         :param request: Запрос. Для корректной вставки в запрос параметров нужно в запросе вставлять %s
         Пример: "select * from "table" where "type" = %s"
         :param params: Параметры, которые нужно вставить запрос
-        :param my_conn: Потом расскажу
+        :param my_conn: Персональный коннект(для транкзакций)
         :return:
         """
         data = self.SqlQuery(request, *params, my_conn=my_conn)

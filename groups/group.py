@@ -1,5 +1,5 @@
 from generals.database import Database
-from groups.templates import GET_ALL_GROUPS, GET_GROUPS_BY_DIRECTION, UPDATE_GROUP_TO_SUBGROUP, GET_GROUPS_BY_PARENTGROUP, ADD_GROUP, CHECK_GROUP_EXIST, CHECK_SUBGROUP_GROUP
+from groups.templates import *
 
 
 def get_all_groups(params):
@@ -33,3 +33,4 @@ def add_group(params):
                 params['title'],
                 params['direction'],
                 params['type'])
+
