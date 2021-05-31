@@ -3,6 +3,10 @@ from flask import make_response
 from abc import abstractmethod
 
 
+class ExceptionsMessages:
+    NAME_DUPLICATES = 'Невозможно вставить запись - обнаружены дупликаты'
+
+
 class ActionExceptionHandler(Exception):
     """
     Базовый класс ошибки
@@ -21,7 +25,7 @@ class BeforeActionException(ActionExceptionHandler):
     """
     def __init__(self, message):
         self._message = message
-        self.error_code = 304
+        self.error_code = 409
 
     def get_response(self):
         params = {

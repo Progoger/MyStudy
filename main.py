@@ -9,7 +9,8 @@ from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_
 from generals.helpers import UUIDEncoder
 from housing.housing import get_all_housing, add_housing, edit_housing_address
 from audience.audience import get_audiences, add_audiences
-from exceptions.exception import ActionExceptionHandler
+from exceptions.exception import ActionExceptionHandler, BeforeActionException, ExceptionsMessages
+from psycopg2 import errors
 import json
 
 app = Flask(__name__)
@@ -57,6 +58,8 @@ def exceptions_catcher(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
+        except errors.UniqueViolation as ex:
+            return BeforeActionException(ExceptionsMessages.NAME_DUPLICATES).get_response()
         except ActionExceptionHandler as ex:
             return ex.get_response()
     return wrapper

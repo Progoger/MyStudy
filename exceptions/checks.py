@@ -1,5 +1,5 @@
 from generals.database import Database
-from exceptions.handlers import ActionErrorCheckHandler, CheckGroupName
+from exceptions.handlers import *
 from exceptions.exception import BeforeActionException
 
 
@@ -8,6 +8,7 @@ class CheckMethodAddGroup(ActionErrorCheckHandler):
     Проверка метода добавления групп
     """
     def __init__(self):
+        super().__init__()
         self._methods_to_check = [CheckGroupName]
 
     def check_action(self, params):
