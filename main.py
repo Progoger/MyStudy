@@ -5,7 +5,7 @@ from users.auth import do_login, load_user_info, get_root_session
 from users.user import get_teachers, get_teachers_by_institute, add_teacher, update_teachers_lesson
 from university.university import (get_all_institutes, get_directions, add_direction, add_institute,
                                    del_direction, del_institute, edit_institute, edit_direction)
-from lessons.lesson import get_lessons, add_lesson, delete_lesson
+from lessons.lesson import get_lessons, add_lesson, delete_lesson, edit_lesson
 from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_by_group, add_group
 from generals.helpers import UUIDEncoder
 from housing.housing import get_all_housing, add_housing, edit_housing_address
@@ -16,7 +16,7 @@ import json
 
 app = Flask(__name__)
 SESSIONS = {}
-DEBUG_MODE = False
+DEBUG_MODE = True
 ROOT_SESSION = get_root_session()
 
 
@@ -326,6 +326,14 @@ def edit_direction_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(edit_direction(params), cls=UUIDEncoder))
+
+
+@app.route('/api/edit_lesson', methods=["POST"])
+@check_session
+def edit_lesson_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(edit_lesson(params), cls=UUIDEncoder))
 
 
 if __name__ == '__main__':

@@ -11,3 +11,8 @@ DELETE_LESSON = """
     delete from "Lesson"
     where "ID" = %s
 """
+
+EDIT_LESSON = """
+    update "Lesson" set "Name" = %s where "ID" = %s
+    returning "ID" "id", "Name" "title" 
+"""

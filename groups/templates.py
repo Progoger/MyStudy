@@ -41,7 +41,3 @@ UPDATE_GROUP_TO_SUBGROUP = """
     ,   "Name" = %s
     ,   "Type" = %s
 """
-
-EDIT_GROUP = """
-    update "Group" set "Name" = %s, "ParentGroup" = %s, "Type" = %s where "Name" = %s 
-"""

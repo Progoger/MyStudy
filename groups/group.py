@@ -34,6 +34,3 @@ def add_group(params):
                 params['direction'],
                 params['type'])
 
-
-def edit_group(params): # "Name" = %s, "ParentGroup" = %s, "Type" = %s where "Name" = %s
-    return Database(params['schema']).SqlQuery(EDIT_GROUP, params['title'], None, params['id'])

@@ -27,11 +27,11 @@ DEL_DIRECTION = """
 """
 
 EDIT_DIRECTION = """
-    update "Direction" set "Title" = %s where "ID" = %s
+    update "Direction" set "Name" = %s where "ID" = %s
     returning "ID" "id", "Name" "title"
 """
 
 EDIT_INSTITUTE = """
-    update "Institute" set "Title" = %s where "ID" = %s
+    update "Institute" set "Name" = %s where "ID" = %s
     returning "ID" "id", "Name" "title"
 """
