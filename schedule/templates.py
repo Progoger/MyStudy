@@ -1,5 +1,5 @@
 ADD_SCHEDULE = """
-    insert into "Schedule" values(%s::uuid, %s::uuid, %s::int4, %s::int4, %s::int4, %s::uuid, %s::uuid, %s::int4, %s)
+    insert into "Schedule" values(%s::uuid, %s::uuid, %s::int4, %s::int4, %s::int4, %s::uuid, %s::uuid, %s::int4, %s, %s::time, %s::time)
     returning "ID" "id"
 """
 
@@ -8,8 +8,9 @@ ADD_GROUP_TO_SCHEDULE = """
 """
 
 GET_SCHEDULE = """
-    select 
-        "DayOfWeek" "weekday"
+    select
+        "ID" "id"
+    ,   "DayOfWeek" "weekday"
     ,	"PairNumber" "time"
     ,	"NumberOfWeek" "week"
     ,	lt."Type" "typename"
@@ -23,6 +24,8 @@ GET_SCHEDULE = """
     ,	h."Address" "address"
     ,	"AudienceNumber" "classid"
     ,	"GroupId" "group"
+    ,   "StartTime" "start"
+    ,   "EndTime" "end"
     from(
         SELECT * from "Schedule" s 
     inner join (
@@ -52,8 +55,9 @@ GET_SCHEDULE = """
 """
 
 GET_SCHEDULE_BY_DAY = """
-    select 
-        "DayOfWeek" "weekday"
+    select
+        "ID" "id"
+    ,   "DayOfWeek" "weekday"
     ,	"PairNumber" "time"
     ,	"NumberOfWeek" "week"
     ,	lt."Type" "typename"
@@ -67,6 +71,8 @@ GET_SCHEDULE_BY_DAY = """
     ,	h."Address" "address"
     ,	"AudienceNumber" "classid"
     ,	"GroupId" "group"
+    ,   "StartTime" "start"
+    ,   "EndTime" "end"
     from(
         SELECT * from "Schedule" s 
         inner join "Schedule/Group" sg on  s."ID" = sg."ScheduleId"
@@ -78,4 +84,14 @@ GET_SCHEDULE_BY_DAY = """
     inner join "Housing" h on ssg."HousingID" = h."ID" 
     where "DayOfWeek" = %s and "NumberOfWeek" = %s
     order by "PairNumber" 
+"""
+
+DELETE_EVENT_WITH_GROUPS = """
+    delete from "Schedule/Group"
+    where "ScheduleId" = %s
+"""
+
+DELETE_EVENT = """
+    delete from "Schedule"
+    where "ID" = %s
 """
