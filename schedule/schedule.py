@@ -1,11 +1,11 @@
 from uuid import uuid4
 from generals.database import Database
-from schedule.templates import ADD_SCHEDULE, ADD_GROUP_TO_SCHEDULE, GET_SCHEDULE
+from schedule.templates import ADD_SCHEDULE, ADD_GROUP_TO_SCHEDULE, GET_SCHEDULE, GET_SCHEDULE_BY_DAY
 from groups.templates import GET_GROUPS_BY_PARENTGROUP
 
 
 pairNumbers = {
-    '8:30 - 10:00':1,
+    '08:30 - 10:00': 1,
     '10:10 - 11:40': 2,
     '11:50 - 13:20': 3,
     '14:00 - 15:30': 4,
@@ -15,7 +15,7 @@ pairNumbers = {
     }
 
 pairTime = {
-    1:'8:30 - 10:00',
+    1: '8:30 - 10:00',
     2: '10:10 - 11:40',
     3: '11:50 - 13:20',
     4: '14:00 - 15:30',
@@ -59,7 +59,7 @@ def add_schedule(params):
             tup2['HousingID'] = event['address']['id']
             tup2['LessonID'] = event['lesson']['id']
             tup2['TeacherID'] = event['tutor']['id']
-            tup2['PairNumber'] = pairNumbers[event['time']]
+            tup2['PairNumber'] = pairNumbers[event['time']['start']+' - '+event['time']['end']]
             schedule = db.SqlQueryRecord(
                 ADD_SCHEDULE,
                 uuid4(),
@@ -82,29 +82,63 @@ def add_schedule(params):
                 db.SqlQuery(ADD_GROUP_TO_SCHEDULE, schedule['id'], groups['subgroup'][0]['id'])
 
 
+def create_event(id, elem):
+    event = {}
+    event['name'] = elem['typename']
+    event['type'] = elem['type']
+    details = {}
+    details['lessonTitle'] = elem['lessonTitle']
+    details['tutor'] = {
+        'id': elem['tutorid'],
+        'name': elem['name'],
+        'surname': elem['surname'],
+        'patronymic': elem['patronymic']
+    }
+    details['address'] = {
+        'id': elem['addressid'],
+        'address': elem['address']
+    }
+    details['time'] = pairTime[elem['time']]
+    details['groups'] = {
+        'groups': [
+            {
+                'title': id[:-1],
+                'id': id[:-1]
+            }
+        ],
+        'subgroup': [
+            {
+                'id': id
+            }
+        ]
+    }
+    event['details'] = details
+    return event
+
+
 def get_schedule(params):
     db = Database(params['schema'])
-    query_res = db.SqlQuery(GET_SCHEDULE, params['id'], params['id']+'%')
+    query_res = db.SqlQuery(GET_SCHEDULE, params['id'], params['id'] + '%')
     dayList_dict = {'Понедельник_1': [],
-               'Вторник_1': [],
-               'Среда_1': [],
-               'Четверг_1': [],
-               'Пятница_1': [],
-               'Суббота_1': [],
-               'Понедельник_2': [],
-               'Вторник_2': [],
-               'Среда_2': [],
-               'Четверг_2': [],
-               'Пятница_2': [],
-               'Суббота_2': []
-               }
+                    'Вторник_1': [],
+                    'Среда_1': [],
+                    'Четверг_1': [],
+                    'Пятница_1': [],
+                    'Суббота_1': [],
+                    'Понедельник_2': [],
+                    'Вторник_2': [],
+                    'Среда_2': [],
+                    'Четверг_2': [],
+                    'Пятница_2': [],
+                    'Суббота_2': []
+                    }
     for elem in query_res:
         event = {}
         event['name'] = elem['typename']
         event['type'] = elem['type']
         details = {}
         details['lessonTitle'] = elem['lessonTitle']
-        details['tutor'] ={
+        details['tutor'] = {
             'id': elem['tutorid'],
             'name': elem['name'],
             'surname': elem['surname'],
@@ -132,7 +166,7 @@ def get_schedule(params):
             ]
         }
         event['details'] = details
-        dayList_dict[DaysOfWeek2[elem['weekday']]+'_'+str(elem['week'])].append(event)
+        dayList_dict[DaysOfWeek2[elem['weekday']] + '_' + str(elem['week'])].append(event)
     res = []
     for key, elem in dayList_dict.items():
         if elem:
@@ -142,4 +176,18 @@ def get_schedule(params):
             tmp['week'] = week
             tmp['eventList'] = elem
             res.append(tmp)
+    return res
+
+
+def get_schedule_by_day(params):
+    db = Database(params['schema'])
+    query_res = db.SqlQuery(GET_SCHEDULE_BY_DAY, params['id'], params['day'], params['week'])
+    event_list = []
+    for elem in query_res:
+        event = create_event(params['id'], elem)
+        event_list.append(event)
+    res = {}
+    res['cardTitle'] = params['day']
+    res['week'] = params['week']
+    res['eventList'] = event_list
     return res

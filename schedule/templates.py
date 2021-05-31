@@ -50,3 +50,32 @@ GET_SCHEDULE = """
     inner join "User" u on ssg."TeacherId" = u."ID"
     inner join "Housing" h on ssg."HousingID" = h."ID" 
 """
+
+GET_SCHEDULE_BY_DAY = """
+    select 
+        "DayOfWeek" "weekday"
+    ,	"PairNumber" "time"
+    ,	"NumberOfWeek" "week"
+    ,	lt."Type" "typename"
+    ,	"LessonType" "type"
+    ,	l."Name" "lessonTitle"
+    ,	"TeacherId" "tutorid"
+    ,	u."Name" "name"
+    ,	u."Surname" "surname"
+    ,	u."Patronymic" "patronymic"
+    ,	h."ID" "addressid"
+    ,	h."Address" "address"
+    ,	"AudienceNumber" "classid"
+    ,	"GroupId" "group"
+    from(
+        SELECT * from "Schedule" s 
+        inner join "Schedule/Group" sg on  s."ID" = sg."ScheduleId"
+        where "GroupId" = %s
+    ) ssg
+    inner join "Lesson" l on ssg."LessonID" = l."ID"
+    inner join "LessonType" lt on ssg."LessonType" = lt."ID"
+    inner join "User" u on ssg."TeacherId" = u."ID"
+    inner join "Housing" h on ssg."HousingID" = h."ID" 
+    where "DayOfWeek" = %s and "NumberOfWeek" = %s
+    order by "PairNumber" 
+"""
