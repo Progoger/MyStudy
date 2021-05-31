@@ -3,7 +3,8 @@ from functools import wraps
 from schedule.schedule import add_schedule, get_schedule
 from users.auth import do_login, load_user_info, get_root_session
 from users.user import get_teachers, get_teachers_by_institute, add_teacher, update_teachers_lesson
-from university.university import get_all_institutes, get_directions, add_direction, add_institute
+from university.university import (get_all_institutes, get_directions, add_direction, add_institute,
+                                   del_direction, del_institute, edit_institute, edit_direction)
 from lessons.lesson import get_lessons, add_lesson, delete_lesson
 from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_by_group, add_group
 from generals.helpers import UUIDEncoder
@@ -15,7 +16,7 @@ import json
 
 app = Flask(__name__)
 SESSIONS = {}
-DEBUG_MODE = True
+DEBUG_MODE = False
 ROOT_SESSION = get_root_session()
 
 
@@ -278,6 +279,7 @@ def add_schedule_route():
     enrichment_json(params)
     return make_response(json.dumps(add_schedule(params), cls=UUIDEncoder))
 
+
 @app.route('/api/get_schedule', methods=["POST"])
 @check_session
 def get_schedule_route():
@@ -285,12 +287,45 @@ def get_schedule_route():
     enrichment_json(params)
     return make_response(json.dumps(get_schedule(params), cls=UUIDEncoder))
 
+
 @app.route('/api/delete_lesson', methods=["POST"])
 @check_session
 def delete_lesson_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(delete_lesson(params), cls=UUIDEncoder))
+
+
+@app.route('/api/delete_direction', methods=["POST"])
+@check_session
+def delete_direction_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(del_direction(params), cls=UUIDEncoder))
+
+
+@app.route('/api/delete_institute', methods=["POST"])
+@check_session
+def delete_institute_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(del_institute(params), cls=UUIDEncoder))
+
+
+@app.route('/api/edit_institute', methods=["POST"])
+@check_session
+def edit_institute_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(edit_institute(params), cls=UUIDEncoder))
+
+
+@app.route('/api/edit_direction', methods=["POST"])
+@check_session
+def edit_direction_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(edit_direction(params), cls=UUIDEncoder))
 
 
 if __name__ == '__main__':
