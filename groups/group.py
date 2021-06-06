@@ -13,6 +13,13 @@ def get_groups_by_direction(params):
     return res
 
 
+def get_groups_by_institute_year(params):
+    res = Database(params['schema']).SqlQuery(GET_GROUPS_BY_INSTITUTE_YEAR, params['institute'], params['year'][0:2]+'%')
+    for elem in res:
+        elem['id'] = elem['title']
+    return res
+
+
 def get_subgroups_by_group(params):
     return Database(params['schema']).SqlQuery(GET_GROUPS_BY_PARENTGROUP, params['id'])
 
