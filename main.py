@@ -5,8 +5,8 @@ from users.auth import do_login, load_user_info, get_root_session, use_code, reg
 from users.user import get_teachers, get_teachers_by_institute, add_teacher, update_teachers_lesson
 from university.university import (get_all_institutes, get_directions, add_direction, add_institute,
                                    del_direction, del_institute, edit_institute, edit_direction)
-from lessons.lesson import get_lessons, add_lesson, delete_lesson, edit_lesson
-from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_by_group, add_group
+from lessons.lesson import get_lessons, get_lesson_types, add_lesson, delete_lesson, edit_lesson, add_lesson_type, edit_lesson_type, delete_lesson_type
+from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_by_group, add_group, get_groups_by_institute_year
 from generals.helpers import UUIDEncoder
 from housing.housing import get_all_housing, add_housing, edit_housing_address
 from audience.audience import get_audiences, add_audiences
@@ -17,7 +17,7 @@ import json
 
 app = Flask(__name__)
 SESSIONS = {}
-DEBUG_MODE = False
+DEBUG_MODE = True
 ROOT_SESSION = get_root_session()
 
 
@@ -159,6 +159,14 @@ def get_lessons_route():
     return make_response(json.dumps(get_lessons(params), cls=UUIDEncoder))
 
 
+@app.route('/api/get_lesson_types', methods=["GET"])
+@check_session
+def get_lesson_types_route():
+    params = dict(request.args)
+    enrichment_json(params)
+    return make_response(json.dumps(get_lesson_types(params), cls=UUIDEncoder))
+
+
 @app.route('/api/get_teachers', methods=["POST"])
 @check_session
 def get_teachers_route():
@@ -191,6 +199,14 @@ def get_groups_by_direction_route():
     return make_response(json.dumps(get_groups_by_direction(params), cls=UUIDEncoder))
 
 
+@app.route('/api/get_groups_by_institute_year', methods=["GET"])
+@check_session
+def get_groups_by_institute_year_route():
+    params = dict(request.args)
+    enrichment_json(params)
+    return make_response(json.dumps(get_groups_by_institute_year(params), cls=UUIDEncoder))
+
+
 @app.route('/api/get_subgroups_by_group', methods=["POST"])
 @check_session
 def get_subgroups_by_group_route():
@@ -206,6 +222,15 @@ def add_lesson_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_lesson(params), cls=UUIDEncoder))
+
+
+@app.route('/api/add_lesson_type', methods=["POST"])
+@check_session
+@exceptions_catcher
+def add_lesson_type_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(add_lesson_type(params), cls=UUIDEncoder))
 
 
 @app.route('/api/add_direction', methods=["POST"])
@@ -269,6 +294,15 @@ def edit_housing_route():
     return make_response(json.dumps(edit_housing_address(params), cls=UUIDEncoder))
 
 
+@app.route('/api/edit_lesson_type', methods=["POST"])
+@check_session
+@exceptions_catcher
+def edit_lesson_type_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(edit_lesson_type(params), cls=UUIDEncoder))
+
+
 @app.route('/api/get_audiences', methods=["POST"])
 @check_session
 def get_audiences_route():
@@ -326,6 +360,14 @@ def delete_lesson_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(delete_lesson(params), cls=UUIDEncoder))
+
+
+@app.route('/api/delete_lesson_type', methods=["POST"])
+@check_session
+def delete_lesson_type_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(delete_lesson_type(params), cls=UUIDEncoder))
 
 
 @app.route('/api/delete_direction', methods=["POST"])

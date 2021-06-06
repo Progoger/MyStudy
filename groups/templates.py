@@ -16,6 +16,21 @@ GET_GROUPS_BY_DIRECTION = """
     ) res
 """
 
+GET_GROUPS_BY_INSTITUTE_YEAR = """
+    select distinct("title")
+    from(
+        select 
+            case
+                when "ParentGroup" is null then g."Name"
+                else "ParentGroup"
+            end "title"
+        from
+        "Group" g
+        inner join "Direction" d on d."InstituteID" = %s
+    ) res
+    where "title" like %s
+"""
+
 GET_GROUPS_BY_PARENTGROUP = """
     select "Name" "id" from "Group"
     where "ParentGroup" = %s

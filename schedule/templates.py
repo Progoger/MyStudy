@@ -9,10 +9,12 @@ ADD_GROUP_TO_SCHEDULE = """
 
 GET_SCHEDULE = """
     select
-        "ID" "id"
+        ssg."ID" "id"
+    ,   l."ID" "lessonId"
     ,   "DayOfWeek" "weekday"
     ,	"PairNumber" "time"
     ,	"NumberOfWeek" "week"
+    ,   lt."LogoType" "logoType"
     ,	lt."Type" "typename"
     ,	"LessonType" "type"
     ,	l."Name" "lessonTitle"
@@ -47,6 +49,7 @@ GET_SCHEDULE = """
         on sg."ScheduleId" = sg2."ScheduleId"
     ) sg
     on s."ID" = sg."ScheduleId"
+    group by "GroupId", "ID", sg."ScheduleId"
     ) ssg
     inner join "Lesson" l on ssg."LessonID" = l."ID"
     inner join "LessonType" lt on ssg."LessonType" = lt."ID"
@@ -56,7 +59,7 @@ GET_SCHEDULE = """
 
 GET_SCHEDULE_BY_DAY = """
     select
-        "ID" "id"
+        ssg."ID" "id"
     ,   "DayOfWeek" "weekday"
     ,	"PairNumber" "time"
     ,	"NumberOfWeek" "week"
