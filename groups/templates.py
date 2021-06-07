@@ -3,13 +3,17 @@ GET_ALL_GROUPS = """
 """
 
 GET_GROUPS_BY_DIRECTION = """
-    select distinct("title")
+    select distinct("title"), "hasSubgroup"
     from(
         select 
             case
                 when "ParentGroup" is null then "Name"
                 else "ParentGroup"
             end "title"
+        ,    case
+                when "ParentGroup" is null then False
+                else True
+            end "hasSubgroup"
         from
         "Group"
         where "DirectionId" = %s
@@ -38,7 +42,7 @@ GET_GROUPS_BY_PARENTGROUP = """
 
 CHECK_GROUP_EXIST = """
     select true from "Group"
-    where "Name" = %s or "ParentName" = %s
+    where "Name" = %s or "ParentGroup" = %s
 """
 
 CHECK_SUBGROUP_GROUP = """
@@ -48,6 +52,7 @@ CHECK_SUBGROUP_GROUP = """
 
 ADD_GROUP = """
     insert into "Group" values(%s, %s, %s, %s)
+    returning "Name" "id"
 """
 
 UPDATE_GROUP_TO_SUBGROUP = """
@@ -55,4 +60,6 @@ UPDATE_GROUP_TO_SUBGROUP = """
         "ParentGroup" = "Name"
     ,   "Name" = %s
     ,   "Type" = %s
+    where "Name" = %s
+    returning "Name" "id"
 """

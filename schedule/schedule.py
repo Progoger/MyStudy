@@ -91,25 +91,41 @@ def add_schedule(params):
 
 def create_event(id, elem):
     event = {}
-    event['id'] = elem['id']
+    event['loaded'] = True
+    event['id'] = str(elem['id'])
     event['name'] = elem['typename']
     event['type'] = elem['type']
+    event['logoType'] = elem['logoType']
     details = {}
-    details['lessonTitle'] = elem['lessonTitle']
+    details['lesson'] = {
+        'title': elem['lessonTitle'],
+        'id': elem['lessonId']
+    }
     details['tutor'] = {
         'id': elem['tutorid'],
         'name': elem['name'],
         'surname': elem['surname'],
         'patronymic': elem['patronymic']
     }
+    details['class'] = {
+        'id': elem['classid']
+    }
     details['address'] = {
         'id': elem['addressid'],
         'address': elem['address']
     }
     details['time'] = {
-        "start": elem['start'],
-        "end": elem['end']
+        "start": str(elem['start'])[0:5],
+        "end": str(elem['end'])[0:5]
     }
+    if elem['group'] == id:
+        subgroup = [
+            {
+                'id': id
+            }
+            ]
+    else:
+        subgroup = []
     details['groups'] = {
         'groups': [
             {
@@ -117,11 +133,7 @@ def create_event(id, elem):
                 'id': id[:-1]
             }
         ],
-        'subgroup': [
-            {
-                'id': id
-            }
-        ]
+        'subgroup': subgroup
     }
     event['details'] = details
     return event
@@ -129,7 +141,7 @@ def create_event(id, elem):
 
 def get_schedule(params):
     db = Database(params['schema'])
-    query_res = db.SqlQuery(GET_SCHEDULE, params['id'], params['id'] + '%')
+    query_res = db.SqlQuery(GET_SCHEDULE, params['id'], params['id'][:-1], params['id'][:-1] + '%')
     dayList_dict = {'Понедельник_1': [],
                     'Вторник_1': [],
                     'Среда_1': [],
@@ -144,52 +156,7 @@ def get_schedule(params):
                     'Суббота_2': []
                     }
     for elem in query_res:
-        event = {}
-        event['loaded'] = True
-        event['id'] = str(elem['id'])
-        event['name'] = elem['typename']
-        event['type'] = elem['type']
-        event['logoType'] = elem['logoType']
-        details = {}
-        details['lesson'] = {
-            'title': elem['lessonTitle'],
-            'id': elem['lessonId']
-        }
-        details['tutor'] = {
-            'id': elem['tutorid'],
-            'name': elem['name'],
-            'surname': elem['surname'],
-            'patronymic': elem['patronymic']
-        }
-        details['class'] = {
-            'id': elem['classid']
-        }
-        details['address'] = {
-            'id': elem['addressid'],
-            'address': elem['address']
-        }
-        details['time'] = {
-            "start": str(elem['start'])[0:5],
-            "end": str(elem['end'])[0:5]
-        }
-        subgroup = []
-        if elem['group'] != params['id']:
-            subgroup = [
-                {
-                    'id': elem['group']
-                }
-            ]
-
-        details['groups'] = {
-            'groups': [
-                {
-                    'title': elem['group'],
-                    'id': elem['group']
-                }
-            ],
-            'subgroup': subgroup
-        }
-        event['details'] = details
+        event = create_event(params['id'], elem)
         dayList_dict[DaysOfWeek2[elem['weekday']] + '_' + str(elem['week'])].append(event)
     res_day_List = []
     for key, elem in dayList_dict.items():
