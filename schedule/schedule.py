@@ -2,7 +2,7 @@ from uuid import uuid4
 from generals.database import Database
 from schedule.templates import DELETE_EVENT_WITH_GROUPS, DELETE_EVENT, ADD_SCHEDULE, ADD_GROUP_TO_SCHEDULE, GET_SCHEDULE, GET_SCHEDULE_BY_DAY
 from groups.templates import GET_GROUPS_BY_PARENTGROUP
-
+import json
 
 pairNumbers = {
     '08:30 - 10:00': 1,
@@ -47,8 +47,9 @@ DaysOfWeek2 = {
 
 def add_schedule(params):
     db = Database(params['schema'])
-    deleted_events = params['deletedEvents']
-    delete_events(db, deleted_events)
+    deleted_events = params.get('deletedEvents')
+    if deleted_events:
+        delete_events(db, deleted_events)
     dayList = params['dayList']
     for day in dayList:
         tup = {'DayOfWeek': day['cardTitle'], 'NumberOfWeek': day['week']}
@@ -79,7 +80,7 @@ def add_schedule(params):
                 tup2['EndTime']
             )
             groups = event['groups']
-            if groups['subgroup'] is None:
+            if not groups['subgroup']:
                 for group in groups['groups']:
                     subgroups = db.SqlQuery(GET_GROUPS_BY_PARENTGROUP, group['id'])
                     for subgroup in subgroups:
@@ -144,44 +145,53 @@ def get_schedule(params):
                     }
     for elem in query_res:
         event = {}
-        event['id'] = elem['id']
+        event['loaded'] = True
+        event['id'] = str(elem['id'])
         event['name'] = elem['typename']
         event['type'] = elem['type']
+        event['logoType'] = elem['logoType']
         details = {}
-        details['lessonTitle'] = elem['lessonTitle']
+        details['lesson'] = {
+            'title': elem['lessonTitle'],
+            'id': elem['lessonId']
+        }
         details['tutor'] = {
             'id': elem['tutorid'],
             'name': elem['name'],
             'surname': elem['surname'],
             'patronymic': elem['patronymic']
         }
+        details['class'] = {
+            'id': elem['classid']
+        }
         details['address'] = {
             'id': elem['addressid'],
             'address': elem['address']
         }
         details['time'] = {
-            "start": elem['start'],
-            "end": elem['end']
+            "start": str(elem['start'])[0:5],
+            "end": str(elem['end'])[0:5]
         }
-        subgroup = None
+        subgroup = []
         if elem['group'] != params['id']:
-            subgroup = elem['group']
+            subgroup = [
+                {
+                    'id': elem['group']
+                }
+            ]
+
         details['groups'] = {
             'groups': [
                 {
-                    'title': params['id'],
-                    'id': params['id']
+                    'title': elem['group'],
+                    'id': elem['group']
                 }
             ],
-            'subgroup': [
-                {
-                    'id': subgroup
-                }
-            ]
+            'subgroup': subgroup
         }
         event['details'] = details
         dayList_dict[DaysOfWeek2[elem['weekday']] + '_' + str(elem['week'])].append(event)
-    res = []
+    res_day_List = []
     for key, elem in dayList_dict.items():
         if elem:
             cardTitle, week = key.split('_')
@@ -189,8 +199,8 @@ def get_schedule(params):
             tmp['cardTitle'] = cardTitle
             tmp['week'] = week
             tmp['eventList'] = elem
-            res.append(tmp)
-    return res
+            res_day_List.append(tmp)
+    return res_day_List
 
 
 def get_schedule_by_day(params):
@@ -208,7 +218,6 @@ def get_schedule_by_day(params):
 
 
 def delete_events(db, deleted_events):
-    for day in deleted_events:
-        for event in day['eventList']:
-            db.SqlQuery(DELETE_EVENT_WITH_GROUPS, event['id'])
-            db.SqlQuery(DELETE_EVENT, event['id'])
+    for event in deleted_events:
+        db.SqlQuery(DELETE_EVENT_WITH_GROUPS, event['id'])
+        db.SqlQuery(DELETE_EVENT, event['id'])
