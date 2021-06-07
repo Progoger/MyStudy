@@ -63,3 +63,18 @@ UPDATE_GROUP_TO_SUBGROUP = """
     where "Name" = %s
     returning "Name" "id"
 """
+
+DELETE_SCHEDULE_GROUP = """
+    delete from "Schedule/Group"
+    where "GroupId" = %s
+"""
+
+DELETE_GROUP = """
+    delete from "Group"
+    where "ParentGroup" = %s
+"""
+
+DELETE_SUBGROUP = """
+    delete from "Group"
+    where "Name" = %s
+"""

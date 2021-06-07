@@ -4,9 +4,12 @@ from schedule.schedule import add_schedule, get_schedule, get_schedule_by_day
 from users.auth import do_login, load_user_info, get_root_session, use_code, register_person
 from users.user import get_teachers, get_teachers_by_institute, add_teacher, update_teachers_lesson
 from university.university import (get_all_institutes, get_directions, add_direction, add_institute,
-                                   del_direction, del_institute, edit_institute, edit_direction, get_directions_with_groups)
-from lessons.lesson import get_lessons, get_lesson_types, add_lesson, delete_lesson, edit_lesson, add_lesson_type, edit_lesson_type, delete_lesson_type
-from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_by_group, add_group, add_subgroup, get_groups_by_institute_year
+                                   del_direction, del_institute, edit_institute, edit_direction,
+                                   get_directions_with_groups)
+from lessons.lesson import (get_lessons, get_lesson_types, add_lesson, delete_lesson, edit_lesson, add_lesson_type,
+                            edit_lesson_type, delete_lesson_type)
+from groups.group import (get_all_groups, get_groups_by_direction, get_subgroups_by_group, add_group, add_subgroup,
+                          get_groups_by_institute_year, delete_group, delete_subgroup)
 from generals.helpers import UUIDEncoder
 from housing.housing import get_all_housing, add_housing, edit_housing_address
 from audience.audience import get_audiences, add_audience
@@ -17,7 +20,7 @@ import json
 
 app = Flask(__name__)
 SESSIONS = {}
-DEBUG_MODE = False
+DEBUG_MODE = True
 ROOT_SESSION = get_root_session()
 
 
@@ -446,6 +449,30 @@ def delete_lesson_type_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(delete_lesson_type(params), cls=UUIDEncoder))
+
+
+@app.route('/api/delete_subgroup', methods=["POST"])
+@check_session
+def delete_subgroup_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(delete_subgroup(params), cls=UUIDEncoder))
+
+
+@app.route('/api/delete_group', methods=["POST"])
+@check_session
+def delete_group_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(delete_group(params), cls=UUIDEncoder))
 
 
 @app.route('/api/delete_direction', methods=["POST"])
