@@ -31,7 +31,7 @@ def add_group(params):
     check = Database(params['schema']).SqlQuery(CHECK_GROUP_EXIST, params['title'], params['title'])
     if len(check) == 0:
         res = Database(params['schema']).SqlQueryRecord(ADD_GROUP, params['title'], None, params['direction'], None)
-        res[0]['title'] = res[0]['id']
+        res['title'] = res['id']
         return res
 
 
@@ -45,7 +45,7 @@ def add_subgroup(params):
             params['body']['title'],
             params['masterItem']['title']
         )
-        res[0]['title'] = res[0]['id']
+        res['title'] = res['id']
         return res
     else:
         res = db.SqlQueryRecord(
@@ -55,7 +55,7 @@ def add_subgroup(params):
             params['body']['direction'],
             params['body']['title'])
 
-        res[0]['title'] = res[0]['id']
+        res['title'] = res['id']
         return res
 
 
