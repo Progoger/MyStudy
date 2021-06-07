@@ -83,7 +83,8 @@ def del_direction(params):
 
 
 def edit_direction(params):
-    return Database(params['schema']).SqlQueryRecord(EDIT_DIRECTION, params['title'], params['id'])
+    if params.get('title'):
+        return Database(params['schema']).SqlQueryRecord(EDIT_DIRECTION, params['title'], params['id'])
 
 
 def edit_institute(params):
