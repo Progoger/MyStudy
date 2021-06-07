@@ -57,3 +57,13 @@ def add_subgroup(params):
 
         res[0]['title'] = res[0]['id']
         return res
+
+
+def delete_group(params):
+    db = Database(params['schema'])
+    db.SqlQuery(DELETE_GROUP, params['id'])
+
+
+def delete_subgroup(params):
+    db = Database(params['schema'])
+    db.SqlQuery(DELETE_SUBGROUP, params['id'])
