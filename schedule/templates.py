@@ -34,8 +34,9 @@ GET_SCHEDULE = """
         select 
             sg."ScheduleId"
         ,	case 
-                when cou = 1 then sg."GroupId"
-                else %s
+                when cou = 1 and %s = sg."GroupId" then sg."GroupId"
+                when cou > 1 then %s
+                else null
             end "GroupId"
         from "Schedule/Group" sg
         inner join (
@@ -48,7 +49,7 @@ GET_SCHEDULE = """
         ) sg2 
         on sg."ScheduleId" = sg2."ScheduleId"
     ) sg
-    on s."ID" = sg."ScheduleId"
+    on s."ID" = sg."ScheduleId" and sg."GroupId" is not null
     group by "GroupId", "ID", sg."ScheduleId"
     ) ssg
     inner join "Lesson" l on ssg."LessonID" = l."ID"

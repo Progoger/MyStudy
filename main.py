@@ -4,19 +4,19 @@ from schedule.schedule import add_schedule, get_schedule, get_schedule_by_day
 from users.auth import do_login, load_user_info, get_root_session
 from users.user import get_teachers, get_teachers_by_institute, add_teacher, update_teachers_lesson
 from university.university import (get_all_institutes, get_directions, add_direction, add_institute,
-                                   del_direction, del_institute, edit_institute, edit_direction)
+                                   del_direction, del_institute, edit_institute, edit_direction, get_directions_with_groups)
 from lessons.lesson import get_lessons, get_lesson_types, add_lesson, delete_lesson, edit_lesson, add_lesson_type, edit_lesson_type, delete_lesson_type
-from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_by_group, add_group, get_groups_by_institute_year
+from groups.group import get_all_groups, get_groups_by_direction, get_subgroups_by_group, add_group, add_subgroup, get_groups_by_institute_year
 from generals.helpers import UUIDEncoder
 from housing.housing import get_all_housing, add_housing, edit_housing_address
-from audience.audience import get_audiences, add_audiences
+from audience.audience import get_audiences, add_audience
 from exceptions.exception import ActionExceptionHandler, BeforeActionException, ExceptionsMessages
 from psycopg2 import errors
 import json
 
 app = Flask(__name__)
 SESSIONS = {}
-DEBUG_MODE = True
+DEBUG_MODE = False
 ROOT_SESSION = get_root_session()
 
 
@@ -125,6 +125,14 @@ def get_directions_route():
     params = dict(request.args)
     enrichment_json(params)
     return make_response(json.dumps(get_directions(params), cls=UUIDEncoder))
+
+
+@app.route('/api/get_directions_with_groups', methods=["GET"])
+@check_session
+def get_directions_with_groups_route():
+    params = dict(request.args)
+    enrichment_json(params)
+    return make_response(json.dumps(get_directions_with_groups(params), cls=UUIDEncoder))
 
 
 @app.route('/api/get_lessons', methods=["GET"])
@@ -287,13 +295,13 @@ def get_audiences_route():
     return make_response(json.dumps(get_audiences(params), cls=UUIDEncoder))
 
 
-@app.route('/api/add_audiences', methods=["POST"])
+@app.route('/api/add_audience', methods=["POST"])
 @check_session
 @exceptions_catcher
-def add_audiences_route():
+def add_audience_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
-    return make_response(json.dumps(add_audiences(params), cls=UUIDEncoder))
+    return make_response(json.dumps(add_audience(params), cls=UUIDEncoder))
 
 
 @app.route('/api/add_group', methods=["POST"])
@@ -303,6 +311,15 @@ def add_group_route():
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_group(params), cls=UUIDEncoder))
+
+
+@app.route('/api/add_subgroup', methods=["POST"])
+@check_session
+@exceptions_catcher
+def add_subgroup_route():
+    params = dict(request.get_json(force=True))
+    enrichment_json(params)
+    return make_response(json.dumps(add_subgroup(params), cls=UUIDEncoder))
 
 
 @app.route('/api/add_schedule', methods=["POST"])

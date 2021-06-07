@@ -35,3 +35,15 @@ EDIT_INSTITUTE = """
     update "Institute" set "Name" = %s where "ID" = %s
     returning "ID" "id", "Name" "title"
 """
+
+GET_DIRECTIONS_WITH_GROUPS = """
+    select
+        "ID" "directionId"
+    ,	d."Name" "direction"
+    ,	g."Name" "subgroup"
+    ,	g."ParentGroup" "group"
+    from "Direction" d
+    inner join "Group" g on d."ID" = g."DirectionId" 
+    where "InstituteID" = %s
+    order by "direction", "group"
+"""

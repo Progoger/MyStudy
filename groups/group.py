@@ -21,23 +21,39 @@ def get_groups_by_institute_year(params):
 
 
 def get_subgroups_by_group(params):
-    return Database(params['schema']).SqlQuery(GET_GROUPS_BY_PARENTGROUP, params['id'])
+    res = Database(params['schema']).SqlQuery(GET_GROUPS_BY_PARENTGROUP, params['id'])
+    for elem in res:
+        elem['title'] = elem['id']
+    return res
 
 
 def add_group(params):
-    if params['type'] is None:
-        check = Database(params['schema']).SqlQuery(CHECK_GROUP_EXIST, params['title'], params['title'])
-        if len(check) > 0:
-            return Database(params['schema']).SqlQuery(ADD_GROUP, params['title'], None, params['direction'], None)
-    else:
-        check = Database(params['schema']).SqlQuery(CHECK_SUBGROUP_GROUP, params['title'])
-        if len(check) > 0:
-            return Database(params['schema']).SqlQuery(UPDATE_GROUP_TO_SUBGROUP, params['title'], params['type'])
-        else:
-            return Database(params['schema']).SqlQuery(
-                ADD_GROUP,
-                params['title']+params['type'],
-                params['title'],
-                params['direction'],
-                params['type'])
+    check = Database(params['schema']).SqlQuery(CHECK_GROUP_EXIST, params['title'], params['title'])
+    if len(check) == 0:
+        res = Database(params['schema']).SqlQueryRecord(ADD_GROUP, params['title'], None, params['direction'], None)
+        res[0]['title'] = res[0]['id']
+        return res
 
+
+def add_subgroup(params):
+    db = Database(params['schema'])
+    check = db.SqlQuery(CHECK_SUBGROUP_GROUP, params['masterItem']['title'])
+    if len(check) > 0:
+        res = db.SqlQueryRecord(
+            UPDATE_GROUP_TO_SUBGROUP,
+            params['masterItem']['title']+params['body']['title'],
+            params['body']['title'],
+            params['masterItem']['title']
+        )
+        res[0]['title'] = res[0]['id']
+        return res
+    else:
+        res = db.SqlQueryRecord(
+            ADD_GROUP,
+            params['masterItem']['title']+params['body']['title'],
+            params['masterItem']['title'],
+            params['body']['direction'],
+            params['body']['title'])
+
+        res[0]['title'] = res[0]['id']
+        return res
