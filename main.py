@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, make_response
+from flask import Flask, request, send_from_directory, make_response, abort
 from functools import wraps
 from schedule.schedule import add_schedule, get_schedule, get_schedule_by_day
 from users.auth import do_login, load_user_info, get_root_session, use_code, register_person
@@ -74,7 +74,12 @@ def static_proxy(path):
 
 @app.route('/')
 @app.route('/constructor')
+@check_session
 def main_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     return send_from_directory('./templates', 'index.html')
 
 
@@ -219,6 +224,10 @@ def get_subgroups_by_group_route():
 @check_session
 @exceptions_catcher
 def add_lesson_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_lesson(params), cls=UUIDEncoder))
@@ -228,6 +237,10 @@ def add_lesson_route():
 @check_session
 @exceptions_catcher
 def add_lesson_type_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_lesson_type(params), cls=UUIDEncoder))
@@ -237,6 +250,10 @@ def add_lesson_type_route():
 @check_session
 @exceptions_catcher
 def add_direction_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_direction(params), cls=UUIDEncoder))
@@ -246,6 +263,10 @@ def add_direction_route():
 @check_session
 @exceptions_catcher
 def add_institute_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_institute(params), cls=UUIDEncoder))
@@ -255,6 +276,10 @@ def add_institute_route():
 @check_session
 @exceptions_catcher
 def add_teacher_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_teacher(params), cls=UUIDEncoder))
@@ -263,6 +288,10 @@ def add_teacher_route():
 @app.route('/api/add_teacher_to_lesson', methods=["POST"])
 @check_session
 def update_teachers_lesson_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(update_teachers_lesson(params), cls=UUIDEncoder))
@@ -280,6 +309,10 @@ def get_housing_route():
 @check_session
 @exceptions_catcher
 def add_housing_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_housing(params), cls=UUIDEncoder))
@@ -289,6 +322,10 @@ def add_housing_route():
 @check_session
 @exceptions_catcher
 def edit_housing_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(edit_housing_address(params), cls=UUIDEncoder))
@@ -298,6 +335,10 @@ def edit_housing_route():
 @check_session
 @exceptions_catcher
 def edit_lesson_type_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(edit_lesson_type(params), cls=UUIDEncoder))
@@ -315,6 +356,10 @@ def get_audiences_route():
 @check_session
 @exceptions_catcher
 def add_audiences_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_audiences(params), cls=UUIDEncoder))
@@ -324,6 +369,10 @@ def add_audiences_route():
 @check_session
 @exceptions_catcher
 def add_group_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_group(params), cls=UUIDEncoder))
@@ -333,6 +382,10 @@ def add_group_route():
 @check_session
 @exceptions_catcher
 def add_schedule_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(add_schedule(params), cls=UUIDEncoder))
@@ -357,6 +410,10 @@ def get_schedule_by_day_route():
 @app.route('/api/delete_lesson', methods=["POST"])
 @check_session
 def delete_lesson_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(delete_lesson(params), cls=UUIDEncoder))
@@ -365,6 +422,10 @@ def delete_lesson_route():
 @app.route('/api/delete_lesson_type', methods=["POST"])
 @check_session
 def delete_lesson_type_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(delete_lesson_type(params), cls=UUIDEncoder))
@@ -373,6 +434,10 @@ def delete_lesson_type_route():
 @app.route('/api/delete_direction', methods=["POST"])
 @check_session
 def delete_direction_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(del_direction(params), cls=UUIDEncoder))
@@ -381,6 +446,10 @@ def delete_direction_route():
 @app.route('/api/delete_institute', methods=["POST"])
 @check_session
 def delete_institute_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(del_institute(params), cls=UUIDEncoder))
@@ -389,6 +458,10 @@ def delete_institute_route():
 @app.route('/api/edit_institute', methods=["POST"])
 @check_session
 def edit_institute_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(edit_institute(params), cls=UUIDEncoder))
@@ -397,6 +470,10 @@ def edit_institute_route():
 @app.route('/api/edit_direction', methods=["POST"])
 @check_session
 def edit_direction_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(edit_direction(params), cls=UUIDEncoder))
@@ -405,6 +482,10 @@ def edit_direction_route():
 @app.route('/api/edit_lesson', methods=["POST"])
 @check_session
 def edit_lesson_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.get_json(force=True))
     enrichment_json(params)
     return make_response(json.dumps(edit_lesson(params), cls=UUIDEncoder))
@@ -413,6 +494,10 @@ def edit_lesson_route():
 @app.route('/api/generate_invite_code', methods=['GET'])
 @check_session
 def generate_invite_code_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.args)
     enrichment_json(params)
     return make_response(json.dumps(generate_codes(params), cls=UUIDEncoder))
@@ -421,6 +506,10 @@ def generate_invite_code_route():
 @app.route('/api/delete_invite_code', methods=['GET'])
 @check_session
 def delete_invite_code_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.args)
     enrichment_json(params)
     return make_response(json.dumps(del_code(params), cls=UUIDEncoder))
@@ -429,6 +518,10 @@ def delete_invite_code_route():
 @app.route('/api/is_active_code', methods=['GET'])
 @check_session
 def is_active_code_route():
+    session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
+    if SESSIONS[session].role != 'admin':
+        print(SESSIONS[session].role)
+        return abort(403)
     params = dict(request.args)
     enrichment_json(params)
     return make_response(json.dumps(is_active_code(params), cls=UUIDEncoder))

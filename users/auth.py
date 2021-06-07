@@ -11,13 +11,17 @@ SYSTEM_ROLES = {
     'admin': '1c976561-577b-497e-9ce7-115275be3065',
     'student': '442f3a52-e9b1-4a27-b5f9-cb86438e1acf'
 }
+SYSTEM_ROLES_UUID = {
+    '1c976561-577b-497e-9ce7-115275be3065': 'admin',
+    '442f3a52-e9b1-4a27-b5f9-cb86438e1acf': 'student'
+}
 
 
 class User:
     """
     Класс для легкого взаимодействия с пользователями
     """
-    def __init__(self, login=None, session=None, schema=None, old_session=None, university=None, color=None):
+    def __init__(self, login=None, session=None, schema=None, old_session=None, university=None, color=None, role=None):
         self.login = login
         self.session = session
         self.schema = schema
@@ -25,6 +29,7 @@ class User:
         self.university = university
         self.color = color
         self.error_code = None
+        self.role = SYSTEM_ROLES_UUID[role]
 
     def get_info_for_web(self):
         """
@@ -34,7 +39,8 @@ class User:
         return {
             'session': self.session,
             'university': self.university,
-            'color': self.color
+            'color': self.color,
+            'role': self.role
         }.copy()
 
     def get_info_for_back(self):
@@ -45,7 +51,8 @@ class User:
         return {
             'login': self.login,
             'session': self.session,
-            'schema': self.schema
+            'schema': self.schema,
+            'role': self.role
         }.copy()
 
     def is_authorized(self):
@@ -65,7 +72,8 @@ def load_user_info(session):
             user_data['Schema'],
             None,
             user_data['University'],
-            user_data['Color']
+            user_data['Color'],
+            user_data['Role']
         )
     else:
         return User(session=session)
@@ -87,7 +95,7 @@ def do_login(login, password):
             return user
         new_session = str(uuid.uuid4())
         db.SqlQuery(UPDATE_SESSION_BY_LOGIN, new_session, date.today(), login)
-        user = User(login, new_session, record['Schema'], record['Session'], record['University'], record['Color'])
+        user = User(login, new_session, record['Schema'], record['Session'], record['University'], record['Color'], record['Role'])
         return user
     else:
         user = User(login)

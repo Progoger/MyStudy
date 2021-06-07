@@ -22,7 +22,8 @@ SELECT
     "Session",
     "EducationalID"::text AS "Schema", 
     E."Color",
-    E."Name" AS "University" 
+    E."Name" AS "University",
+    "Role"::text
 FROM "Authorization"
 INNER JOIN "Educational" E on E."Schema" = "Authorization"."EducationalID"
 WHERE "Session" = %s
