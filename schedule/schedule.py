@@ -83,8 +83,11 @@ def add_schedule(params):
             if not groups['subgroup']:
                 for group in groups['groups']:
                     subgroups = db.SqlQuery(GET_GROUPS_BY_PARENTGROUP, group['id'])
-                    for subgroup in subgroups:
-                        db.SqlQuery(ADD_GROUP_TO_SCHEDULE, schedule['id'], subgroup['id'])
+                    if len(subgroups) > 0:
+                        for subgroup in subgroups:
+                            db.SqlQuery(ADD_GROUP_TO_SCHEDULE, schedule['id'], subgroup['id'])
+                    else:
+                        db.SqlQuery(ADD_GROUP_TO_SCHEDULE, schedule['id'], group['id'])
             else:
                 db.SqlQuery(ADD_GROUP_TO_SCHEDULE, schedule['id'], groups['subgroup'][0]['id'])
 
