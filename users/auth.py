@@ -29,7 +29,7 @@ class User:
         self.university = university
         self.color = color
         self.error_code = None
-        self.role = SYSTEM_ROLES_UUID[role]
+        self.role = SYSTEM_ROLES_UUID.get(role)
 
     def get_info_for_web(self):
         """

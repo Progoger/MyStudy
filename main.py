@@ -20,7 +20,7 @@ import json
 
 app = Flask(__name__)
 SESSIONS = {}
-DEBUG_MODE = True
+DEBUG_MODE = False
 ROOT_SESSION = get_root_session()
 
 
@@ -77,11 +77,9 @@ def static_proxy(path):
 
 @app.route('/')
 @app.route('/constructor')
-@check_session
 def main_route():
     session = ROOT_SESSION if DEBUG_MODE else request.cookies.get('_ms_AuthToken')
-    if SESSIONS[session].role != 'admin':
-        print(SESSIONS[session].role)
+    if session and SESSIONS[session].role != 'admin':
         return abort(403)
     return send_from_directory('./templates', 'index.html')
 
