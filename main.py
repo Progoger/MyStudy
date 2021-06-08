@@ -417,12 +417,14 @@ def get_schedule_route():
     return make_response(json.dumps(get_schedule(params), cls=UUIDEncoder))
 
 
-@app.route('/api/get_schedule_by_day', methods=["POST"])
+@app.route('/api/get_schedule_by_day', methods=["GET"])
 @check_session
 def get_schedule_by_day_route():
-    params = dict(request.get_json(force=True))
+    params = dict(request.args)
     enrichment_json(params)
-    return make_response(json.dumps(get_schedule_by_day(params), cls=UUIDEncoder))
+    response = make_response(json.dumps(get_schedule_by_day(params), cls=UUIDEncoder))
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 @app.route('/api/delete_lesson', methods=["POST"])
