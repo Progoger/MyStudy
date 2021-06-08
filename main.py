@@ -20,7 +20,7 @@ import json
 
 app = Flask(__name__)
 SESSIONS = {}
-DEBUG_MODE = True
+DEBUG_MODE = False
 ROOT_SESSION = get_root_session()
 
 
