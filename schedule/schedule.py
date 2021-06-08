@@ -1,6 +1,7 @@
 from uuid import uuid4
+import datetime
 from generals.database import Database
-from schedule.templates import DELETE_EVENT_WITH_GROUPS, DELETE_EVENT, ADD_SCHEDULE, ADD_GROUP_TO_SCHEDULE, GET_SCHEDULE, GET_SCHEDULE_BY_DAY
+from schedule.templates import DELETE_EVENT_WITH_GROUPS, GET_STUDENT, DELETE_EVENT, ADD_SCHEDULE, ADD_GROUP_TO_SCHEDULE, GET_SCHEDULE, GET_SCHEDULE_BY_DAY
 from groups.templates import GET_GROUPS_BY_PARENTGROUP
 import json
 
@@ -175,15 +176,59 @@ def get_schedule(params):
 
 def get_schedule_by_day(params):
     db = Database(params['schema'])
-    query_res = db.SqlQuery(GET_SCHEDULE_BY_DAY, params['id'], params['day'], params['week'])
+    date_str = params['date'].split('-')
+    group = db.SqlQueryRecord(GET_STUDENT, params['id'])
+    date = datetime.datetime(int(date_str[0]), int(date_str[1]), int(date_str[2]))
+    weekday = date.isoweekday()
+    if weekday == 7:
+        query_res = db.SqlQuery(
+            GET_SCHEDULE_BY_DAY + 'order by "DayOfWeek" desc, "StartTime"',
+            group['Group'],
+            [1, weekday],
+            1
+        )
+    else:
+        query_res = db.SqlQuery(
+            GET_SCHEDULE_BY_DAY + 'order by "DayOfWeek", "StartTime"',
+            group['Group'],
+            [weekday, weekday+1],
+            1
+        )
     event_list = []
+    last_weekday = query_res[0]['weekday']
+    res = []
+    day = {}
     for elem in query_res:
+        if last_weekday != elem['weekday']:
+            day['cardTitle'] = DaysOfWeek2[last_weekday]
+            day['week'] = 1
+            day['eventList'] = event_list
+            res.append(day)
+            day = {}
+            event_list = []
+            last_weekday = elem['weekday']
         event = create_event(params['id'], elem)
+        start = str(elem['start']).split(':')
+        event['details']['time']['start'] = str(datetime.datetime(
+            year=int(date_str[0]),
+            month=int(date_str[1]),
+            day=int(date_str[2]),
+            hour=int(start[0]),
+            minute=int(start[1])
+        ))
+        end = str(elem['end']).split(':')
+        event['details']['time']['end'] = str(datetime.datetime(
+            year=int(date_str[0]),
+            month=int(date_str[1]),
+            day=int(date_str[2]),
+            hour=int(end[0]),
+            minute=int(end[1])
+        ))
         event_list.append(event)
-    res = {}
-    res['cardTitle'] = params['day']
-    res['week'] = params['week']
-    res['eventList'] = event_list
+    day['cardTitle'] = DaysOfWeek2[last_weekday]
+    day['week'] = 1
+    day['eventList'] = event_list
+    res.append(day)
     return res
 
 

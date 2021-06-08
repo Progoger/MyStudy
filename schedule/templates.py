@@ -7,6 +7,11 @@ ADD_GROUP_TO_SCHEDULE = """
     insert into "Schedule/Group" values(%s, %s)
 """
 
+GET_STUDENT = """
+    select "Group" from "User"
+    where "ID" = %s
+"""
+
 GET_SCHEDULE = """
     select
         ssg."ID" "id"
@@ -56,14 +61,17 @@ GET_SCHEDULE = """
     inner join "LessonType" lt on ssg."LessonType" = lt."ID"
     inner join "User" u on ssg."TeacherId" = u."ID"
     inner join "Housing" h on ssg."HousingID" = h."ID" 
+    order by "StartTime" 
 """
 
 GET_SCHEDULE_BY_DAY = """
     select
         ssg."ID" "id"
+    ,   l."ID" "lessonId"
     ,   "DayOfWeek" "weekday"
     ,	"PairNumber" "time"
     ,	"NumberOfWeek" "week"
+    ,   lt."LogoType" "logoType"
     ,	lt."Type" "typename"
     ,	"LessonType" "type"
     ,	l."Name" "lessonTitle"
@@ -86,8 +94,7 @@ GET_SCHEDULE_BY_DAY = """
     inner join "LessonType" lt on ssg."LessonType" = lt."ID"
     inner join "User" u on ssg."TeacherId" = u."ID"
     inner join "Housing" h on ssg."HousingID" = h."ID" 
-    where "DayOfWeek" = %s and "NumberOfWeek" = %s
-    order by "PairNumber" 
+    where "DayOfWeek" in (select unnest(%s)) and "NumberOfWeek" = %s
 """
 
 DELETE_EVENT_WITH_GROUPS = """
